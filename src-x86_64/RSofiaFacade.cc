@@ -20,7 +20,9 @@ std::vector<float> RSofiaFacade::train(
     , const bool training_objective 
     , const int dimensionality
     , const int hash_mask_bits
-    , const bool no_bias_term) 
+    , const bool no_bias_term
+    , const bool verbose
+) 
 {
     
     // Set random seed
@@ -56,10 +58,12 @@ std::vector<float> RSofiaFacade::train(
   clock_t train_start = clock();
   assert(w != NULL);
 
-  // Default values
+  // Default values for c and lambda
   float c = 0.0;
   float lambda_val = lambda;
 
+  
+  // Define eta
   sofia_ml::EtaType eta_type;
   
   if (eta=="basic")
@@ -73,6 +77,7 @@ std::vector<float> RSofiaFacade::train(
     exit(0);
   }
  
+  // Define learner type
   sofia_ml::LearnerType learner_type;
   
   if (learner=="pegasos")
@@ -101,6 +106,7 @@ std::vector<float> RSofiaFacade::train(
     exit(0);
   }
   
+  // Run required outer loop
   if (loop=="stochastic")
     sofia_ml::StochasticOuterLoop(
         training_data, learner_type, eta_type, lambda_val, c, iterations, w
@@ -134,11 +140,11 @@ std::vector<float> RSofiaFacade::train(
     exit(0);
   }
 
+  // Clean up
   PrintElapsedTime(train_start, "Time to complete training: ");
-  
   // XXX: need to destroy training_data?
   
-  // Return weights
+  // Return model fit
   size_t n = w->GetDimensions();
   std::vector<float> weights(n);
 
@@ -149,6 +155,59 @@ std::vector<float> RSofiaFacade::train(
 }
 
 
+/*
+ 
+std::vector<float> predict(const Rcpp::NumericVector& weights, const Rcpp::NumericMatrix& newdata, const bool no_bias_term, const string& prediction_type) 
+{
+    
+    // Import data into a SfDataSet structure
+    SfDataSet test_data = SfDataSet(!no_bias_term);
+  
+    for(int i=1; i<=newdata.nrow(); i++) {
+
+        // SfDataset::AddVector supports only data in string format
+        std::stringstream out_stream;
+        out_stream << 0;
+        
+        for(int j=1; j<=newdata.ncol(); j++) {
+            out_stream << " " << j << ":" << newdata[i,j];
+        }
+        
+        test_data.AddVector(out_stream.str());
+        
+    }
+    
+  
+    
+    std::stringstream in_stream;
+    in_stream << weights[1];
+    
+    for(int i=2; i<=weights.length(); i++) {
+        in_stream << " " << weights[i];
+    }
+    
+    
+    SfWeightVector* w = new SfWeightVector(in_stream.str());    
+    
+    std::vector<float> predictions;
+    
+    clock_t predict_start = clock();
+    if (prediction_type == "linear")
+      sofia_ml::SvmPredictionsOnTestSet(test_data, *w, &predictions);
+    else if (prediction_type == "logistic")
+      sofia_ml::LogisticPredictionsOnTestSet(test_data, *w, &predictions);
+    else {
+      std::cerr << "prediction " << prediction_type << " not supported.";
+      exit(0);
+    }
+
+    PrintElapsedTime(predict_start, "Time to make test prediction results: ");
+   
+    return(predictions);
+}
+
+*/
+
 
 RCPP_MODULE(sofia) {
    using namespace Rcpp ;
@@ -157,5 +216,6 @@ RCPP_MODULE(sofia) {
    // expose the default constructor
    .constructor()    
    .method("train", &RSofiaFacade::train)
+   //.method("predict", &RSofiaFacade::predict)
    ;
 }

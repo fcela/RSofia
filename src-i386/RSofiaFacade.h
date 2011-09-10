@@ -31,12 +31,15 @@ class RSofiaFacade {
       , const bool verbose
     );
     
+    /*
     std::vector<float> predict(
-        const std::vector<float> weights 
-      , const Rcpp::NumericMatrix& x
+        const Rcpp::NumericVector& weights
+      , const Rcpp::NumericMatrix& newdata
+      , const bool no_bias_term
       , const string& prediction_type
     );
-
+     
+     */ 
 
 };
 

@@ -155,22 +155,22 @@ std::vector<float> RSofiaFacade::train(
 }
 
 
-
+/*
  
-std::vector<float> predict(const Rcpp::NumericVector& weights, const Rcpp::NumericMatrix& x, const bool no_bias_term, const string& prediction_type) 
+std::vector<float> predict(const Rcpp::NumericVector& weights, const Rcpp::NumericMatrix& newdata, const bool no_bias_term, const string& prediction_type) 
 {
     
     // Import data into a SfDataSet structure
     SfDataSet test_data = SfDataSet(!no_bias_term);
   
-    for(int i=1; i<=x.nrow(); i++) {
+    for(int i=1; i<=newdata.nrow(); i++) {
 
         // SfDataset::AddVector supports only data in string format
         std::stringstream out_stream;
         out_stream << 0;
         
-        for(int j=1; j<=x.ncol(); j++) {
-            out_stream << " " << j << ":" << x[i,j];
+        for(int j=1; j<=newdata.ncol(); j++) {
+            out_stream << " " << j << ":" << newdata[i,j];
         }
         
         test_data.AddVector(out_stream.str());
@@ -189,7 +189,7 @@ std::vector<float> predict(const Rcpp::NumericVector& weights, const Rcpp::Numer
     
     SfWeightVector* w = new SfWeightVector(in_stream.str());    
     
-    vector<float> predictions;
+    std::vector<float> predictions;
     
     clock_t predict_start = clock();
     if (prediction_type == "linear")
@@ -202,25 +202,11 @@ std::vector<float> predict(const Rcpp::NumericVector& weights, const Rcpp::Numer
     }
 
     PrintElapsedTime(predict_start, "Time to make test prediction results: ");
-    
-    std::fstream prediction_stream;
-    prediction_stream.open(CMD_LINE_STRINGS["--results_file"].c_str(),
-			   std::fstream::out);
-    if (!prediction_stream) {
-      std::cerr << "Error opening test results output file " 
-		<< CMD_LINE_STRINGS["--results_file"] << std::endl;
-      exit(1);
-    }
-    std::cerr << "Writing test results to: "
-	      << CMD_LINE_STRINGS["--results_file"] << std::endl;
-    for (unsigned int i = 0; i < predictions.size(); ++i) {
-      prediction_stream << predictions[i] << "\t" 
-			<< test_data.VectorAt(i).GetY() << std::endl;
-    }
-    prediction_stream.close();
-    std::cerr << "   Done." << std::endl;
+   
+    return(predictions);
 }
 
+*/
 
 
 RCPP_MODULE(sofia) {
@@ -230,6 +216,6 @@ RCPP_MODULE(sofia) {
    // expose the default constructor
    .constructor()    
    .method("train", &RSofiaFacade::train)
-   .method("predict", &RSofiaFacade::predict)
+   //.method("predict", &RSofiaFacade::predict)
    ;
 }
