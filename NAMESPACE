@@ -1,0 +1,3 @@
+useDynLib(RSofia)
+exportPattern("^[[:alpha:]]+")
+import( Rcpp )
