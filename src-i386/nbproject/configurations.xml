@@ -42,7 +42,7 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
-          <buildCommand>R CMD build /Users/fcela/Dropbox/src/RSofia --binary</buildCommand>
+          <buildCommand>R CMD install /Users/fcela/Dropbox/src/RSofia </buildCommand>
           <cleanCommand></cleanCommand>
           <executablePath></executablePath>
           <ccTool>
