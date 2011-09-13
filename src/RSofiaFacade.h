@@ -30,7 +30,7 @@ class RSofiaFacade {
 
   public:
     
-    RSofiaFacade(); 
+//    RSofiaFacade(); 
   
     std::vector<float> train(
         const Rcpp::NumericMatrix& x

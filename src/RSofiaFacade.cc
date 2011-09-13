@@ -23,7 +23,8 @@
 #include "RSofiaFacade.h"
 #include "sf-sparse-vector.h"
 
-RSofiaFacade::RSofiaFacade() {};
+// this is not necessary
+//RSofiaFacade::RSofiaFacade() {};
 
 std::vector<float> RSofiaFacade::train(
       const Rcpp::NumericMatrix& x
