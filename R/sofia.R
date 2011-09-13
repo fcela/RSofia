@@ -35,8 +35,6 @@ sofia <- function(formula, data
                   
 }
 
-
-
 sofia.fit <- function(x, y
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
