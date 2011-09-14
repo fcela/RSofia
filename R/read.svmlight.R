@@ -3,7 +3,7 @@
 
 read.svmlight <- function(file, ndim) {
 
-  x <- .Call("svmlight_reader", file, ndim, PACKAGE = "RSofia")
+  x <- .Call("svmlight_reader", file, PACKAGE = "RSofia")
   
   #just a list with a class
 

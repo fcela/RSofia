@@ -1,14 +1,13 @@
 #include "svmlight_reader.h"
 
-SEXP svmlight_reader(SEXP rfile_name 
-  , SEXP rdim)
+SEXP svmlight_reader(SEXP rfile_name)
+
 {
 
   //vector containing rows of svmlight txt file  
   std::list<std::string> svmdata;
 
   std::string file_name = Rcpp::as<std::string>(rfile_name); 
-  int dim               = Rcpp::as<int>(rdim);
  
   //open svm datafile for reading
   std::ifstream in(file_name.c_str());
@@ -25,28 +24,41 @@ SEXP svmlight_reader(SEXP rfile_name
   std::string whitespaces(" \t\f\v\n\r");
   size_t found;
 
+  size_t last_ws;
+  size_t last_colon;
+
   //trailing white spaces can get you in trouble
+
+  long max_idx = 0; // i will assume that the idxs are in order
+  char * offset = NULL;
+  
 
   while(getline(in, tmp, '\n')) {
     
      found = tmp.find_last_not_of(whitespaces);
    
      if(found != std::string::npos) {
-      
+     
        tmp.erase(found + 1);
+
+       //overwriting found
+ 
+       last_colon = tmp.find_last_of(":");
+       last_ws    = tmp.find_last_of(whitespaces);
+
+       max_idx = std::max(max_idx, strtol(tmp.substr(last_ws+1, last_colon-last_ws-1).c_str(), &offset, 0));       
+
        svmdata.push_back(tmp);
     
     }
   }
 
-  Rcpp::NumericMatrix * mat = new Rcpp::NumericMatrix(svmdata.size(), dim);
+  Rcpp::NumericMatrix * mat = new Rcpp::NumericMatrix(svmdata.size(), max_idx);
   Rcpp::IntegerVector * lab = new Rcpp::IntegerVector(svmdata.size());
 
   // first - first idx in string, last - last idx in string, p - midpoint in "xxx:yyy" token 
   int first, last, p;
 
-  char * offset = NULL;
-  
   float val; // place holder for values inserted into IntVector and NumMatrix
   long col_idx;
   long row_idx = 0; 
