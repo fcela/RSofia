@@ -12,6 +12,11 @@ SEXP svmlight_reader(SEXP rfile_name
  
   //open svm datafile for reading
   std::ifstream in(file_name.c_str());
+
+  //break if file doesn't exist
+  if ( !in ) {
+    return Rcpp::wrap(std::string("file does not exist"));
+  }
   
   //placeholder
   std::string tmp;

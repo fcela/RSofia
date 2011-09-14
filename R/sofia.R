@@ -1,6 +1,47 @@
 ### fits model
+### make generic
 
-sofia <- function(formula, data
+sofia <- function(x, data, ...) {
+  UseMethod("sofia")
+}
+#naming is bad, i know
+sofia.svmlight <- function(x, data = NULL
+  , random_seed = floor(runif(1, 1, 65535))
+  , lambda = 0.1 
+  , iterations = 100000
+  , learner_type = "pegasos"
+  , eta_type = "pegasos"
+  , loop_type = "stochastic"
+	, rank_step_probability = 0.5
+  , passive_aggressive_c = 10000000.0
+  , passive_aggressive_lambda = 0
+  , perceptron_margin_size = 1.0
+  , training_objective = FALSE
+	, hash_mask_bits = 0
+  , verbose = FALSE
+) 
+
+{
+
+   ### still not sure how to treat the error term...
+
+   y <- x$labels
+   x <- x$data
+
+   dimensionality <- ncol(x)
+
+   no_bias_term <- TRUE ### for now
+ 
+   return(
+      sofia.fit(x, y, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability
+      , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
+      , no_bias_term, dimensionality, hash_mask_bits, verbose
+     ) 
+   )
+}
+ 
+
+sofia.formula <- function(x, data
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
