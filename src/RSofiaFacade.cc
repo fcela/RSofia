@@ -53,19 +53,18 @@ std::vector<float> RSofiaFacade::train(
     // Import data into a SfDataSet structure
     SfDataSet training_data = SfDataSet(!no_bias_term);
  
-    // i wouldn't it be better to call the constructor once?
-    // maybe i'm wrong? 
     std::stringstream out_stream;
     
-    // XXX: rows start at 1, right?
-    // mike - no, I don't believe so
-    for(int i = 0; i < x.nrow(); ++i) {
+//   You cannot use multiple indices in a single [ ] expression. It is a C language restriction that no C++ matrix class system or library I know of overcomes. So use ( ) instead --dirk 
 
+   for(int i = 0; i < x.nrow(); ++i) {
         // SfDataset::AddVector supports only data in string format
         out_stream << y[i];
         
-        for(int j = 0; j < x.ncol(); ++j) {
-            out_stream << " " << j << ":" << x[i,j];
+        for(int j = 0; j < x.ncol(); ++j) { 
+          if(x(i,j) != 0) {
+            out_stream << " " << j << ":" << x(i,j);
+          }
         }
         
         training_data.AddVector(out_stream.str());
@@ -174,11 +173,14 @@ std::vector<float> RSofiaFacade::train(
   // Return model fit
   
     size_t n = w->GetDimensions();
+    
     std::vector<float> weights(n);
 
     for(size_t i = 0; i < n; ++i)
       weights[i] = w->ValueOf(i);
   
+    delete w;
+
     return(weights);
 }
 
@@ -194,30 +196,32 @@ std::vector<float> RSofiaFacade::predict(
     // Import data into a SfDataSet structure
    SfDataSet test_data = SfDataSet(!no_bias_term);
   
-   for(int i=1; i<=newdata.nrow(); i++) {
+   // pre-increment is better
 
-      // SfDataset::AddVector supports only data in string format
-     std::stringstream out_stream;
-  
-     // were you just experimenting?     
+   std::stringstream out_stream;
+   
+   for(size_t i = 0 ; i < newdata.nrow(); ++i) {
 
-     out_stream << 0;
+     //i see now, this value is irrelevant
+     out_stream << 0; 
         
-     for(int j = 1; j <= newdata.ncol(); j++) {
-       out_stream << " " << j << ":" << newdata[i,j];
+     for(int j = 0; j < newdata.ncol(); ++j) {
+       if(newdata(i,j) != 0) {
+         out_stream << " " << j << ":" << newdata(i,j);
+       }
      }
         
      test_data.AddVector(out_stream.str());
-        
+     out_stream.str(""); 
+   
    }
     
    std::stringstream in_stream;
    
-   in_stream << weights[1];
-    
-   for(int i=2; i<=weights.length(); i++) {
-     in_stream << " " << weights[i];
-   }
+   // do we need worry about the buffer size?
+
+   for(int i = 0; i < weights.length(); i++)
+     in_stream << weights[i] << " ";
     
    SfWeightVector* w = new SfWeightVector(in_stream.str());    
     
@@ -234,7 +238,9 @@ std::vector<float> RSofiaFacade::predict(
     }
    //PrintElapsedTime(predict_start, "Time to make test prediction results: ");
    
-  return(predictions);
+    delete w;
+
+    return(predictions);
 }
 
 RCPP_MODULE(sofia) {
@@ -246,4 +252,5 @@ RCPP_MODULE(sofia) {
    .method("train", &RSofiaFacade::train)
    .method("predict", &RSofiaFacade::predict)
    ;
+
 }
