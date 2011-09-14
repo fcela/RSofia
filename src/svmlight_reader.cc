@@ -24,12 +24,12 @@ SEXP svmlight_reader(SEXP rfile_name
 
   while(getline(in, tmp, '\n')) {
     
-    found = tmp.find_last_not_of(whitespaces);
+     found = tmp.find_last_not_of(whitespaces);
    
      if(found != std::string::npos) {
       
-      tmp.erase(found + 1);
-      svmdata.push_back(tmp);
+       tmp.erase(found + 1);
+       svmdata.push_back(tmp);
     
     }
   }
