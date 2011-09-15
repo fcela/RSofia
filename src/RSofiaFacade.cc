@@ -23,9 +23,6 @@
 #include "RSofiaFacade.h"
 #include "sf-sparse-vector.h"
 
-// this is not necessary
-//RSofiaFacade::RSofiaFacade() {};
-
 std::vector<float> RSofiaFacade::train(
       const Rcpp::NumericMatrix& x
     , const Rcpp::NumericVector& y
@@ -63,7 +60,8 @@ std::vector<float> RSofiaFacade::train(
         
         for(int j = 0; j < x.ncol(); ++j) { 
           if(x(i,j) != 0) {
-            out_stream << " " << j << ":" << x(i,j);
+            //ooops need to increment j!
+            out_stream << " " << (j + 1) << ":" << x(i,j);
           }
         }
         
@@ -194,53 +192,53 @@ std::vector<float> RSofiaFacade::predict(
 {
     
     // Import data into a SfDataSet structure
-   SfDataSet test_data = SfDataSet(!no_bias_term);
+  SfDataSet test_data = SfDataSet(!no_bias_term);
   
    // pre-increment is better
 
-   std::stringstream out_stream;
-   
-   for(size_t i = 0 ; i < newdata.nrow(); ++i) {
+  std::stringstream out_stream;
+     
+  for(size_t i = 0 ; i < newdata.nrow(); ++i) {
 
      //i see now, this value is irrelevant
-     out_stream << 0; 
+    out_stream << 0; 
         
-     for(int j = 0; j < newdata.ncol(); ++j) {
-       if(newdata(i,j) != 0) {
-         out_stream << " " << j << ":" << newdata(i,j);
-       }
-     }
+    for(int j = 0; j < newdata.ncol(); ++j) {
+      if(newdata(i,j) != 0) {
+        out_stream << " " << (j+1) << ":" << newdata(i,j);
+      }
+    }
         
-     test_data.AddVector(out_stream.str());
-     out_stream.str(""); 
+    test_data.AddVector(out_stream.str());
+    out_stream.str(""); 
    
-   }
+  }
     
-   std::stringstream in_stream;
+  std::stringstream in_stream;
    
-   // do we need worry about the buffer size?
+  // do we need worry about the buffer size?
 
-   for(int i = 0; i < weights.length(); i++)
-     in_stream << weights[i] << " ";
+  for(int i = 0; i < weights.length(); ++i)
+    in_stream << weights[i] << " ";
     
-   SfWeightVector* w = new SfWeightVector(in_stream.str());    
+  SfWeightVector* w = new SfWeightVector(in_stream.str());    
     
-   std::vector<float> predictions;
+  std::vector<float> predictions;
     
    //clock_t predict_start = clock();
-    if (prediction_type == "linear")
-      sofia_ml::SvmPredictionsOnTestSet(test_data, *w, &predictions);
-    else if (prediction_type == "logistic")
-      sofia_ml::LogisticPredictionsOnTestSet(test_data, *w, &predictions);
-    else {
-      std::cerr << "prediction " << prediction_type << " not supported.";
-      exit(0);
-    }
+  if (prediction_type == "linear")
+    sofia_ml::SvmPredictionsOnTestSet(test_data, *w, &predictions);
+  else if (prediction_type == "logistic")
+    sofia_ml::LogisticPredictionsOnTestSet(test_data, *w, &predictions);
+  else {
+    std::cerr << "prediction " << prediction_type << " not supported.";
+    exit(0);
+  }
    //PrintElapsedTime(predict_start, "Time to make test prediction results: ");
    
-    delete w;
+  delete w;
 
-    return(predictions);
+  return(predictions);
 }
 
 RCPP_MODULE(sofia) {
