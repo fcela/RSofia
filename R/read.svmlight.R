@@ -1,7 +1,7 @@
 ### ndim should probably be done automatically
 ### despite perf. cost
 
-read.svmlight <- function(file, ndim) {
+read.svmlight <- function(file) {
 
   x <- .Call("svmlight_reader", file, PACKAGE = "RSofia")
   
