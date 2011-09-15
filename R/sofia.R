@@ -19,6 +19,7 @@ sofia.svmlight <- function(x, data = NULL
   , training_objective = FALSE
 	, hash_mask_bits = 0
   , verbose = FALSE
+  , no_bias_term = FALSE
 ) 
 
 {
@@ -28,9 +29,7 @@ sofia.svmlight <- function(x, data = NULL
    y <- x$labels
    x <- x$data
 
-   dimensionality <- ncol(x)
-
-   no_bias_term <- TRUE ### for now
+   dimensionality <- (ncol(x) + 1) ##?
  
    return(
       sofia.fit(x, y, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability
