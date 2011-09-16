@@ -1,52 +1,36 @@
-#include<iostream>
-#include<iterator>
-#include<functional>
-#include<sstream>
+#include "svmlight_writer.h"
 
-#include<boost/numeric/ublas/matrix.hpp>
-#include<boost/numeric/ublas/vector.hpp>
-#include<boost/random/bernoulli_distribution.hpp>
-#include<boost/random/normal_distribution.hpp>
-#include<boost/random/mersenne_twister.hpp>
+SEXP csv_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels) {
 
-#include<boost/bind.hpp>
+  Rcpp::NumericMatrix data(rdata);
+  Rcpp::IntegerVector labels(rlabels);
 
-using namespace boost::numeric::ublas;
+  std::string file_name = Rcpp::as<std::string>(rfile_name);
 
-struct F {
-  typedef int result_type;
-  result_type operator()(int x) { return 2 * x; }
-};
+  std::ofstream of(file_name.c_str());
 
-int main() {
+  SEXP return_value;
 
-  boost::random::mt19937 gen;
-  boost::random::bernoulli_distribution<> bern(.5);
-  boost::random::normal_distribution<> norm(0.,1.);
+  if(of.is_open()) {
+ 
+    for(size_t i = 0; i < data.ncol(); ++i) {
+      of << labels(i) << " ";
+      for(size_t j = 0; j < data.nrow(); ++j) {
+        if(data(i,j) != 0) {
+          of << (j + 1) << ":" << data(i,j) << " ";
+        }
+      } 
+      of << '\n';
+    }
+    
+    of.close();
 
-  vector<int>    x(10);
-  matrix<double> y(10,10);
+    return_value = Rcpp::wrap(0);
 
-  std::generate(x.begin(), x.end(), boost::bind(bern, gen)); 
-
-  for(unsigned i = 0; i < y.size1(); ++i)
-    for(unsigned j = 0; j < y.size2(); ++j)
-      y(i, j) = (bern(gen) ? 0. : norm(gen)); 
-
-  std::stringstream ss;
-
-  for(size_t i = 0; i < y.size1(); ++i) {
-    ss << x(i) << " ";
-    for(size_t j = 0; j < y.size2(); ++j) {
-      if(y(i,j) != 0) {
-        ss << (j + 1) << ":" << y(i,j) << " ";
-      }
-    } 
-    ss << '\n';
+  } else {
+    return_value = Rcpp::wrap(std::string("Error Opening File\n"));
   }
 
-  std::cout << ss.str() << std::endl;
-
-  return EXIT_SUCCESS;
+  return return_value;
 
 }
