@@ -9,20 +9,27 @@ sofia.svmlight <- function(x, data = NULL
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
-  , learner_type = "pegasos"
-  , eta_type = "pegasos"
-  , loop_type = "stochastic"
-	, rank_step_probability = 0.5
+  , learner_type = c("pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos") 
+  , eta_type = c("pegasos", "basic", "constant") 
+  , loop_type = c("stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc")
+  , rank_step_probability = 0.5
   , passive_aggressive_c = 10000000.0
   , passive_aggressive_lambda = 0
   , perceptron_margin_size = 1.0
   , training_objective = FALSE
-	, hash_mask_bits = 0
+  , hash_mask_bits = 0
   , verbose = FALSE
   , no_bias_term = FALSE
 ) 
 
 {
+
+   ### check inputs
+
+  learner_type <- match.arg(learner_type)
+  loop_type <- match.arg(loop_type)
+  eta_type <- match.arg(eta_type)
+
 
    ### still not sure how to treat the error term...
 
@@ -44,17 +51,21 @@ sofia.formula <- function(x, data
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
-  , learner_type = "pegasos"
-  , eta_type = "pegasos"
-  , loop_type = "stochastic"
-	, rank_step_probability = 0.5
+  , learner_type = c("pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos") 
+  , eta_type = c("pegasos", "basic", "constant") 
+  , loop_type = c("stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc")
+  , rank_step_probability = 0.5
   , passive_aggressive_c = 10000000.0
   , passive_aggressive_lambda = 0
   , perceptron_margin_size = 1.0
   , training_objective = FALSE
-	, hash_mask_bits = 0
+  , hash_mask_bits = 0
   , verbose = FALSE
 ) {
+  
+  learner_type <- match.arg(learner_type)
+  loop_type <- match.arg(loop_type)
+  eta_type <- match.arg(eta_type)
   
   mf <- model.frame(formula, data)
                   
@@ -94,7 +105,7 @@ sofia.fit <- function(x, y
 ) {
                   
   sofia_facade <- new(RSofiaFacade)
-  weights <- sofia_facade$train(x, y
+  sofia_resultset <- sofia_facade$train(x, y
     , random_seed 
     , lambda 
     , iterations
@@ -111,6 +122,9 @@ sofia.fit <- function(x, y
   	, no_bias_term
     , verbose
   )
+
+  weights       <- sofia_resultset$weights
+  training_time <- sofia_resultset$training_time 
  
   obj <- list(
     par = list(random_seed=random_seed
@@ -128,6 +142,8 @@ sofia.fit <- function(x, y
               	, hash_mask_bits=hash_mask_bits
               	, no_bias_term=no_bias_term),
     weights = weights
+    , training_time = training_time
+
   )
  
   class(obj) <- "sofia"
