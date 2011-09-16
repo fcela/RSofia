@@ -23,7 +23,8 @@
 #include "RSofiaFacade.h"
 #include "sf-sparse-vector.h"
 
-std::vector<float> RSofiaFacade::train(
+std::map<std::string, SEXP> RSofiaFacade::train (
+//std::vector<float> RSofiaFacade::train(
       const Rcpp::NumericMatrix& x
     , const Rcpp::NumericVector& y
     , const long int random_seed
@@ -80,7 +81,7 @@ std::vector<float> RSofiaFacade::train(
     
     assert(w != NULL);
   
- //     clock_t train_start = clock();
+    clock_t train_start = clock();
 
   // Default values for c and lambda
   
@@ -164,6 +165,14 @@ std::vector<float> RSofiaFacade::train(
       exit(0);
     }
 
+    clock_t train_end = clock();
+
+    float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
+
+    // this might be a value we will want to return
+
+ //   std::cout << time_elapsed << std::endl;
+  
   // Clean up
   //PrintElapsedTime(train_start, "Time to complete training: ");
   // XXX: need to destroy training_data?
@@ -179,7 +188,13 @@ std::vector<float> RSofiaFacade::train(
   
     delete w;
 
-    return(weights);
+    //result set
+    std::map<std::string, SEXP> rs;
+
+    rs["weights"]       = Rcpp::wrap(weights);
+    rs["training_time"] = Rcpp::wrap(time_elapsed); 
+
+    return(rs);
 }
 
  

@@ -31,8 +31,8 @@ class RSofiaFacade {
   public:
     
 //    RSofiaFacade(); 
-  
-    std::vector<float> train(
+    std::map<std::string, SEXP> train(
+    //std::vector<float> train(
         const Rcpp::NumericMatrix& x
       , const Rcpp::NumericVector& y
       , const long int random_seed
