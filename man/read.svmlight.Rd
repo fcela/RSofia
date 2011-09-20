@@ -9,15 +9,15 @@
 Read datasets in SVM-Light sparse data format:
 
 \code{
-<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\n
+<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\\n
 }
 
 \code{
-<class-label> qid:<optional-query-id> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\n
+<class-label> qid:<optional-query-id> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\\n
 }
 
 \code{
-<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value># Optional comment or extra data, following the optional "#" symbol.\n
+<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value># Optional comment or extra data, following the optional "#" symbol.\\n
 }
 
 }
@@ -37,5 +37,16 @@ Read datasets in SVM-Light sparse data format:
 } 
 
 \examples{
+
+data(irismod)
+
+irismod.svmlight <- as.svmlight(Is.Virginica ~ ., irismod)
+
+tmp <- tempfile()
+write.svmlight(irismod.svmlight, file = tmp)
+
+irismod.svmlight2 <- read.svmlight(tmp)
+
+unlink(tmp)
 
 }

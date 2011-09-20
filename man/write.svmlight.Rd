@@ -27,4 +27,11 @@ Write datasets in SVM-Light sparse data format
 
 \examples{
 
+data(irismod.svmlight)
+
+tmp <- tempfile()
+write.svmlight(irismod.svmlight, tmp)
+### cleanup
+unlink(tmp)
+
 }

@@ -8,7 +8,12 @@
 \code{sofia} is used to fit classification and regression models provided by D. Sculley's sofia-ml.
 } 
 
-\usage{ sofia(x) } 
+\usage{ sofia(x, data, \dots) 
+
+\method{sofia}{formula}()
+\method{sofia}{svmlight}()
+
+} 
 
 \arguments{
 

@@ -10,7 +10,7 @@ as.svmlight <- function(formula, data) {
 
   x <- mm[, ifelse(no_bias_term, 1, 2):ncol(mm)]
                  
-  res <- structure(list(labels = y, data = x), class = "svmlight")
+  res <- structure(list(data = x, labels = y), class = "svmlight")
 
   return (res) 
 

@@ -33,13 +33,10 @@ sofia.svmlight <- function(x, data = NULL
 
    ### still not sure how to treat the error term...
 
-   y <- x$labels
-   x <- x$data
-
-   dimensionality <- (ncol(x) + 1) ##?
+   dimensionality <- (ncol(x$data) + 1) ##?
  
    return(
-      sofia.fit(x, y, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability
+      sofia.fit(x$labels, x$data, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability
       , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
       , no_bias_term, dimensionality, hash_mask_bits, verbose
      ) 
@@ -70,7 +67,7 @@ sofia.formula <- function(x, data
   learner_type <- match.arg(learner_type)
   loop_type <- match.arg(loop_type)
   eta_type <- match.arg(eta_type)
-  
+ 
   mf <- model.frame(x, data)
                   
   y <- mf[,1]
@@ -82,7 +79,7 @@ sofia.formula <- function(x, data
   dimensionality <- ifelse(no_bias_term, ncol(x), ncol(x)+1)
                   
   return(
-    sofia.fit(x, y, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
+    sofia.fit(y, x, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
     , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
     , no_bias_term, dimensionality, hash_mask_bits, verbose
     )
@@ -90,7 +87,10 @@ sofia.formula <- function(x, data
                   
 }
 
-sofia.fit <- function(x, y
+### x -> labels
+### data -> matrix
+
+sofia.fit <- function(x, data
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
@@ -109,7 +109,7 @@ sofia.fit <- function(x, y
 ) {
                   
   sofia_facade <- new(RSofiaFacade)
-  sofia_resultset <- sofia_facade$train(x, y
+  sofia_resultset <- sofia_facade$train(data, x
     , random_seed 
     , lambda 
     , iterations

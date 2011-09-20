@@ -5,6 +5,6 @@
 #include<string>
 #include<Rcpp.h>
 
-RcppExport SEXP csv_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels); 
+RcppExport SEXP svmlight_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels); 
 
 #endif

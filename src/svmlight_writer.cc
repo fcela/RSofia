@@ -1,6 +1,6 @@
 #include "svmlight_writer.h"
 
-SEXP csv_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels) {
+SEXP svmlight_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels) {
 
   Rcpp::NumericMatrix data(rdata);
   //i had mistakenly made this an integer vector, it should be numeric for regression problems.
@@ -14,9 +14,9 @@ SEXP csv_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels) {
 
   if(of.is_open()) {
  
-    for(size_t i = 0; i < data.ncol(); ++i) {
+    for(size_t i = 0; i < data.nrow(); ++i) {
       of << labels(i) << " ";
-      for(size_t j = 0; j < data.nrow(); ++j) {
+      for(size_t j = 0; j < data.ncol(); ++j) {
         if(data(i,j) != 0) {
           of << (j + 1) << ":" << data(i,j) << " ";
         }

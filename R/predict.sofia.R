@@ -5,7 +5,7 @@
 # no_bias_term    : logical "FALSE" by default
 ##############################################################
 
-predict.sofia <- function(object, data, prediction_type) {
+predict.sofia <- function(object, data, prediction_type, ...) {
 
   sofia_facade <- new(RSofiaFacade)
 

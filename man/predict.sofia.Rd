@@ -2,17 +2,9 @@
 
 \alias{predict.sofia} 
 
-\title{Read Files in SVM-Light Format} 
+\title{Predict} 
 
 \description{
-
-Read datasets in SVM-Light sparse data format:
-
-<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\n
-
-<class-label> qid:<optional-query-id> <feature-id>:<feature-value> ... <feature-id>:<feature-value>\n
-
-<class-label> <feature-id>:<feature-value> ... <feature-id>:<feature-value># Optional comment or extra data, following the optional "#" symbol.\n
 
 } 
 
