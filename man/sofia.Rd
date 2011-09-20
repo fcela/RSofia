@@ -41,6 +41,35 @@
 \item{verbose}{logical.}
 } 
 
+\details{}
+
+\value{\code{sofia} returns an object of class "sofia".
+
+An object of class "sofia" is a list containing at least the following components:
+
+\item{par}{a list containing the parameters specified in training the model}
+
+\item{weights}{a numeric vector of the parameter weights (the model) }
+
+\item{training_time}{time used to fit the model (does not include io time) }
+
+
+}
+
+\author{
+
+}
+
+\references{
+
+D. Sculley. \emph{Combined Regression and Ranking}. Proceedings of the 16th Annual SIGKDD Conference on Knowledge Discover and Data Mining, 2010.
+
+D. Sculley. \emph{Web-Scale K-Means Clustering}. Proceedings of the 19th international conference on World Wide Web, 2010.
+
+D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ranking, 2009. Presents the indexed sampling methods used learning to rank, including the rank and roc loops.
+
+}
+
 \seealso{
 \link{http://code.google.com/p/sofia-ml/}
 } 

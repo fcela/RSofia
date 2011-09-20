@@ -3,39 +3,57 @@
 \alias{RSofia}
 \docType{package}
 \title{
-What the package does (short line)
+Train and Test Suite of Models from Sofia-ml
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Sofia-ml is a suite of fast incremental algorithms for machine learning that can be used for training models for classification or ranking
 }
 \details{
+
 \tabular{ll}{
 Package: \tab RSofia\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2011-09-06\cr
-License: \tab What license is it under?\cr
+License: \tab apache \cr
 LazyLoad: \tab yes\cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+
 }
 \author{
-Who wrote it
+Michael King <wmichaelking1@gmail.com> and Fernando Cela Diaz <fcela@sloan.mit.edu>. 
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Original sofia-ml code by D. Sculley <dsculley@google.com>
+
+Maintainer: Who to complain to <wmichaelking1@gmail.com>
 }
 \references{
-~~ Literature or other references for background information ~~
+
+D. Sculley. \emph{Combined Regression and Ranking}. Proceedings of the 16th Annual SIGKDD Conference on Knowledge Discover and Data Mining, 2010.
+
+D. Sculley. \emph{Web-Scale K-Means Clustering}. Proceedings of the 19th international conference on World Wide Web, 2010.
+
+D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ranking, 2009. Presents the indexed sampling methods used learning to rank, including the rank and roc loops.
+
+K. Crammer, O. Dekel, J. Keshet, S. Shalev-Shwartz, and Y. Singer. \emph{Online passive-aggressive algorithms}. J. Mach. Learn. Res., 7, 2006. Presents the Passive-Aggressive Perceptron algorithm.
+
+T. Joachims. \emph{Optimizing search engines using clickthrough data}. In KDD ’02: Proceedings of the eighth ACM SIGKDD international conference on Knowledge discovery and data mining, 2002. Presents the RankSVM objective function, a pairwise objective function used by the rank loop method in sofia-ml.
+
+Y. Li and P. M. Long. \emph{The relaxed online maximum margin algorithm}. Mach. Learn., 46(1-3), 2002. Presents the ROMMA algorithm.
+
+S. Shalev-Shwartz, Y. Singer, and N. Srebro. Pegasos: \emph{Primal estimated sub-gradient solver for SVM}. In ICML ’07: Proceedings of the 24th international conference on Machine learning, 2007. Presents the Pegasos SVM solver.
+
+T. Zhang. \emph{Solving large scale linear prediction problems using stochastic gradient descent algorithms}. In ICML ’04: Proceedings of the twenty-ﬁrst international conference on Machine learning, 2004. Presents SGD SVM.
+
+\link{http://leon.bottou.org/projects/sgd} Leon Bottou's SGD page, including experiments with SGD SVM.
+
+W. Krauth and M. M´ezard. \emph{Learning algorithms with optimal stability in neural networks}. Journal of Physics A, 20(11):745–752, 1987. Presents Perceptron with Margins.
+
+
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+
 }
 \examples{
-%% ~~ simple examples of the most important functions ~~
 }
