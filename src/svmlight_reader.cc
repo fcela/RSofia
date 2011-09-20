@@ -54,7 +54,8 @@ SEXP svmlight_reader(SEXP rfile_name)
   }
 
   Rcpp::NumericMatrix * mat = new Rcpp::NumericMatrix(svmdata.size(), max_idx);
-  Rcpp::IntegerVector * lab = new Rcpp::IntegerVector(svmdata.size());
+  // i had mistakenly made this an Integer vector, but it should be numeric, for regression problems
+  Rcpp::NumericVector * lab = new Rcpp::NumericVector(svmdata.size());
 
   // first - first idx in string, last - last idx in string, p - midpoint in "xxx:yyy" token 
   int first, last, p;
@@ -73,7 +74,7 @@ SEXP svmlight_reader(SEXP rfile_name)
     last = i->find(" ");
     tmp  = i->substr(first, last-first);
 
-    (*lab)(row_idx) = strtol(tmp.c_str(), &offset, 0);
+    (*lab)(row_idx) = strtod(tmp.c_str(), &offset);
 
     while(last > 0) {
 

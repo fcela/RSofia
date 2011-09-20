@@ -3,7 +3,8 @@
 SEXP csv_writer(SEXP rfile_name, SEXP rdata, SEXP rlabels) {
 
   Rcpp::NumericMatrix data(rdata);
-  Rcpp::IntegerVector labels(rlabels);
+  //i had mistakenly made this an integer vector, it should be numeric for regression problems.
+  Rcpp::NumericVector labels(rlabels);
 
   std::string file_name = Rcpp::as<std::string>(rfile_name);
 

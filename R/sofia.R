@@ -27,8 +27,8 @@ sofia.svmlight <- function(x, data = NULL
    ### check inputs
 
   learner_type <- match.arg(learner_type)
-  loop_type <- match.arg(loop_type)
-  eta_type <- match.arg(eta_type)
+  loop_type    <- match.arg(loop_type)
+  eta_type     <- match.arg(eta_type)
 
 
    ### still not sure how to treat the error term...
@@ -62,17 +62,21 @@ sofia.formula <- function(x, data
   , hash_mask_bits = 0
   , verbose = FALSE
 ) {
+
+  ### need to replace with as.svmlight to eliminate duplicate code
+  ### I think we should set no_bias_term permanately to FALSE and just have 
+  ### the user provide the data with or without a column of ones
   
   learner_type <- match.arg(learner_type)
   loop_type <- match.arg(loop_type)
   eta_type <- match.arg(eta_type)
   
-  mf <- model.frame(formula, data)
+  mf <- model.frame(x, data)
                   
   y <- mf[,1]
                           
-  no_bias_term <- ifelse(attr(terms(formula), "intercept")==0, TRUE, FALSE)
-  mm <- model.matrix(formula, mf) 
+  no_bias_term <- ifelse(attr(terms(x, data = data), "intercept")==0, TRUE, FALSE)
+  mm <- model.matrix(x, mf) 
 
   x <- mm[, ifelse(no_bias_term, 1, 2):ncol(mm)]
   dimensionality <- ifelse(no_bias_term, ncol(x), ncol(x)+1)
