@@ -4,6 +4,7 @@
 #include<iostream>
 #include<map>
 #include<sstream>
+#include<cstdlib>
 #include<string>
 
 using std::map;
