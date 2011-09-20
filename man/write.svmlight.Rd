@@ -10,7 +10,7 @@ Write datasets in SVM-Light sparse data format
 
 } 
 
-\usage{ write.svmlight(x, file) } 
+\usage{ write.svmlight(x, file, \dots) } 
 
 \arguments{
 
