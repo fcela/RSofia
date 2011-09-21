@@ -1,6 +1,9 @@
 \name{sofia} 
 
 \alias{sofia} 
+\alias{sofia.formula}
+\alias{sofia.svmlight}
+\alias{sofia.fit}
 
 \title{ Fitting Models from sofia-ml - Suite of Fast Incremental Algorithms for Machine Learning } 
 
@@ -18,7 +21,7 @@
         "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
     passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
     perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
-    verbose = FALSE)
+    verbose = FALSE, \dots)
 \method{sofia}{svmlight}(x, data = NULL, random_seed = floor(runif(1, 1, 65535)), 
     lambda = 0.1, iterations = 1e+05, learner_type = c("pegasos", 
         "sgd-svm", "passive-aggressive", "margin-perceptron", 
@@ -28,13 +31,15 @@
         "combined-roc"), rank_step_probability = 0.5, passive_aggressive_c = 1e+07, 
     passive_aggressive_lambda = 0, perceptron_margin_size = 1, 
     training_objective = FALSE, hash_mask_bits = 0, verbose = FALSE, 
-    no_bias_term = FALSE) 
+    no_bias_term = FALSE, \dots) 
 
 } 
 
 \arguments{
 
-\item{x}{sofia-ml object}
+\item{x}{formula method: a \code{formula} object. svmlight method: an \code{svmlight} object}
+\item{data}{formula method: a \code{"dataframe"}. svmlight method: \code{NULL}}
+\item{random_seed}{an integer. Makes algorithm use this seed. Can be useful in testing and parameter tuning}
 \item{lambda}{a numeric scalar. Value of lambda for SVM regularization, used by both Pegasos SVM and SGD-SVM.}
 \item{iterations}{an integer. Number of stochastic gradient steps to take.}
 \item{learner_type}{a character string indicating which type of learner to use. One of \code{"pegasos"} (default), \code{"sgd-svm"}, \code{"passive-aggressive"}, \code{"margin-perceptron"}, \code{"romma"}, \code{"logreg-pegasos"}}
@@ -58,10 +63,12 @@
 \item{rank_step_probability}{a numeric scalar. Probability that we will take a rank step (as opposed to a standard stochastic gradient step) in a combined ranking or combined ROC loop.}
 \item{passive_aggressive_c}{a numeric scalar. Maximum size of any step taken in a single passive-aggressive update}
 \item{passive_aggressive_lambda}{a numeric scalar. Lambda for pegasos-style projection for passive-aggressive update. When set to 0 (default) no projection is performed.}
+\item{perceptron_margin_size}{Width of margin for perceptron with margins. Default of 1 is equivalent to unregularized SVM-loss}
 \item{training_objective}{logical. When \code{TRUE}, computes the value of the standard SVM objective function on training data, after training.}
 \item{hash_mask_bits}{an integer. When set to a non-zero value, causes the use of a hased weight vector with hashed cross product features. This allows learning on conjunction of features, at some increase in computational cost. Note that this flag must be set both in training and testing to function properly. The size of the hash table is set to 2^\code{hash_mask_bits}. default value of 0 shows that hash cross products are not used.}
 \item{verbose}{logical.}
 \item{no_bias_term}{logical.}
+\item{\dots}{items passed to methods.}
 } 
 
 \details{}

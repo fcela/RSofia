@@ -20,6 +20,7 @@ sofia.svmlight <- function(x, data = NULL
   , hash_mask_bits = 0
   , verbose = FALSE
   , no_bias_term = FALSE
+  , ...
 ) 
 
 {
@@ -58,6 +59,7 @@ sofia.formula <- function(x, data
   , training_objective = FALSE
   , hash_mask_bits = 0
   , verbose = FALSE
+  , ...
 ) {
 
   ### need to replace with as.svmlight to eliminate duplicate code
@@ -106,6 +108,7 @@ sofia.fit <- function(x, data
   , dimensionality = ncol(x)+ifelse(no_bias_term,0,1)
 	, hash_mask_bits = 0
   , verbose = FALSE
+  , ...
 ) {
                   
   sofia_facade <- new(RSofiaFacade)
