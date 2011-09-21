@@ -30,6 +30,10 @@ Read datasets in SVM-Light sparse data format:
 
 } 
 
+\value{
+\code{read.svmlight} returns an \code{"svmlight"} object. 
+}
+
 \seealso{
 
 \code{
@@ -43,6 +47,7 @@ data(irismod)
 irismod.svmlight <- as.svmlight(Is.Virginica ~ ., irismod)
 
 tmp <- tempfile()
+ 
 write.svmlight(irismod.svmlight, file = tmp)
 
 irismod.svmlight2 <- read.svmlight(tmp)

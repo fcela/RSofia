@@ -10,8 +10,25 @@
 
 \usage{ sofia(x, data, \dots) 
 
-\method{sofia}{formula}()
-\method{sofia}{svmlight}()
+\method{sofia}{formula}(x, data, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
+    iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
+        "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos"), 
+    eta_type = c("pegasos", "basic", "constant"), loop_type = c("stochastic", 
+        "balanced-stochastic", "rank", "roc", "query-norm-rank", 
+        "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
+    passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
+    perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
+    verbose = FALSE)
+\method{sofia}{svmlight}(x, data = NULL, random_seed = floor(runif(1, 1, 65535)), 
+    lambda = 0.1, iterations = 1e+05, learner_type = c("pegasos", 
+        "sgd-svm", "passive-aggressive", "margin-perceptron", 
+        "romma", "logreg-pegasos"), eta_type = c("pegasos", "basic", 
+        "constant"), loop_type = c("stochastic", "balanced-stochastic", 
+        "rank", "roc", "query-norm-rank", "combined-ranking", 
+        "combined-roc"), rank_step_probability = 0.5, passive_aggressive_c = 1e+07, 
+    passive_aggressive_lambda = 0, perceptron_margin_size = 1, 
+    training_objective = FALSE, hash_mask_bits = 0, verbose = FALSE, 
+    no_bias_term = FALSE) 
 
 } 
 
@@ -44,6 +61,7 @@
 \item{training_objective}{logical. When \code{TRUE}, computes the value of the standard SVM objective function on training data, after training.}
 \item{hash_mask_bits}{an integer. When set to a non-zero value, causes the use of a hased weight vector with hashed cross product features. This allows learning on conjunction of features, at some increase in computational cost. Note that this flag must be set both in training and testing to function properly. The size of the hash table is set to 2^\code{hash_mask_bits}. default value of 0 shows that hash cross products are not used.}
 \item{verbose}{logical.}
+\item{no_bias_term}{logical.}
 } 
 
 \details{}
@@ -53,17 +71,11 @@
 An object of class "sofia" is a list containing at least the following components:
 
 \item{par}{a list containing the parameters specified in training the model}
-
 \item{weights}{a numeric vector of the parameter weights (the model) }
-
 \item{training_time}{time used to fit the model (does not include io time) }
 
-
 }
 
-\author{
-
-}
 
 \references{
 
@@ -76,7 +88,20 @@ D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ra
 }
 
 \seealso{
-\link{http://code.google.com/p/sofia-ml/}
+\url{http://code.google.com/p/sofia-ml/}
 } 
 
-\examples{}
+\examples{
+
+### using formula interface and dataframe
+
+data(irismod)
+##train on all variables
+sofia(Is.Virginica ~ ., irismod)
+
+### using svmlight object interface
+
+irismod.svmlight <- as.svmlight(Is.Virginica ~ ., irismod)
+sofia(irismod.svmlight)
+
+}

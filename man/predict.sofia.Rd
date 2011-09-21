@@ -16,12 +16,13 @@ Predicted values based on Sofia-ml model object.
 } 
 
 \arguments{
+
 \item{object}{sofia-ml object}
 \item{newdata}{A data frame in which to look for variables with which to predict.}
-\item{prediction_type}{a character string. Options are \code{"linear"} for regression models and \code{"logistic"} for classification models.
+\item{prediction_type}{a character string. Options are \code{"linear"} for regression models and \code{"logistic"} for classification models.}
 \item{\dots}{unused}
+
 } 
-}
 
 \value{\code{"predict.sofia"} produces a numeric vector of predictions }
 

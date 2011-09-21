@@ -21,11 +21,11 @@ LazyLoad: \tab yes\cr
 
 }
 \author{
-Michael King <wmichaelking1@gmail.com> and Fernando Cela Diaz <fcela@sloan.mit.edu>. 
+W. Michael King <wmichaelking1@gmail.com> and Fernando Cela Diaz <fcela@sloan.mit.edu>. 
 
 Original sofia-ml code by D. Sculley <dsculley@google.com>
 
-Maintainer: Who to complain to <wmichaelking1@gmail.com>
+Maintainer: W. Michael King <wmichaelking1@gmail.com>
 }
 \references{
 
