@@ -4,6 +4,7 @@
 #include<iostream>
 #include<map>
 #include<sstream>
+#include<cstdio>
 #include<cstdlib>
 #include<string>
 
