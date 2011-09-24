@@ -2,18 +2,17 @@
 
 \alias{sofia} 
 \alias{sofia.formula}
-\alias{sofia.svmlight}
 \alias{sofia.fit}
 
-\title{ Fitting Models from sofia-ml - Suite of Fast Incremental Algorithms for Machine Learning } 
+\title{Fitting sofia-ml models} 
 
 \description{
 \code{sofia} is used to fit classification and regression models provided by D. Sculley's sofia-ml.
 } 
 
-\usage{ sofia(x, data, \dots) 
+\usage{ sofia(x, \dots) 
 
-\method{sofia}{formula}(x, data, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
+\method{sofia}{formula}(formula, data, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
     iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
         "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos"), 
     eta_type = c("pegasos", "basic", "constant"), loop_type = c("stochastic", 
@@ -22,23 +21,22 @@
     passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
     perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
     verbose = FALSE, \dots)
-\method{sofia}{svmlight}(x, data = NULL, random_seed = floor(runif(1, 1, 65535)), 
-    lambda = 0.1, iterations = 1e+05, learner_type = c("pegasos", 
-        "sgd-svm", "passive-aggressive", "margin-perceptron", 
-        "romma", "logreg-pegasos"), eta_type = c("pegasos", "basic", 
-        "constant"), loop_type = c("stochastic", "balanced-stochastic", 
-        "rank", "roc", "query-norm-rank", "combined-ranking", 
-        "combined-roc"), rank_step_probability = 0.5, passive_aggressive_c = 1e+07, 
-    passive_aggressive_lambda = 0, perceptron_margin_size = 1, 
-    training_objective = FALSE, hash_mask_bits = 0, verbose = FALSE, 
-    no_bias_term = FALSE, \dots) 
 
-} 
+\method{sofia}{character}(filename, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
+    iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
+        "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos"), 
+    eta_type = c("pegasos", "basic", "constant"), loop_type = c("stochastic", 
+        "balanced-stochastic", "rank", "roc", "query-norm-rank", 
+        "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
+    passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
+    perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
+    verbose = FALSE, \dots)
+}
 
 \arguments{
 
-\item{x}{formula method: a \code{formula} object. svmlight method: an \code{svmlight} object}
-\item{data}{formula method: a \code{"dataframe"}. svmlight method: \code{NULL}}
+\item{x}{a \code{formula} object or a character with a path to a file}
+\item{data}{data to parse formula on, when model is specified via a formula}
 \item{random_seed}{an integer. Makes algorithm use this seed. Can be useful in testing and parameter tuning}
 \item{lambda}{a numeric scalar. Value of lambda for SVM regularization, used by both Pegasos SVM and SGD-SVM.}
 \item{iterations}{an integer. Number of stochastic gradient steps to take.}
@@ -81,6 +79,10 @@ An object of class "sofia" is a list containing at least the following component
 \item{weights}{a numeric vector of the parameter weights (the model) }
 \item{training_time}{time used to fit the model (does not include io time) }
 
+If the method was called via the formula interface, it will additionally include:
+
+\item{formula}{formula with the specification of the model}
+
 }
 
 
@@ -100,15 +102,11 @@ D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ra
 
 \examples{
 
-### using formula interface and dataframe
 
-data(irismod)
-##train on all variables
-sofia(Is.Virginica ~ ., irismod)
+i.TRAIN <- sample(1:nrow(iris), 100)
+model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg")
+p <- predict(model.logreg, newdata=iris[-1*i.TRAIN,])
+table(predicted=p>0.5, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
 
-### using svmlight object interface
-
-irismod.svmlight <- as.svmlight(Is.Virginica ~ ., irismod)
-sofia(irismod.svmlight)
 
 }
