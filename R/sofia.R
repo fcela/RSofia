@@ -29,7 +29,7 @@ sofia.formula <- function(formula, data
   
   parsed <- parse_formula(formula, data)
 
-  dimensionality <- ifelse(parsed$no_bias_term, ncol(parsed$data), ncol(parsed$data)+1)
+  dimensionality <- ncol(parsed$data)+1
   
   sofia.model <-sofia.fit(parsed$data, parsed$labels, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
     , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
@@ -82,7 +82,9 @@ sofia.fit <- function(x, y
     , verbose
   )
 
-  weights       <- sofia_resultset$weights
+  weights        <- sofia_resultset$weights
+  names(weights) <- c("(Offset)", colnames(x))
+                                        
   training_time <- sofia_resultset$training_time 
  
   obj <- list(
