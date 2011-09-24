@@ -1,51 +1,8 @@
-### fits model
-### make generic
-
-sofia <- function(x, data, ...) {
+sofia <- function(x, ...) {
   UseMethod("sofia")
 }
-#naming is bad, i know
-sofia.svmlight <- function(x, data = NULL
-  , random_seed = floor(runif(1, 1, 65535))
-  , lambda = 0.1 
-  , iterations = 100000
-  , learner_type = c("pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos") 
-  , eta_type = c("pegasos", "basic", "constant") 
-  , loop_type = c("stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc")
-  , rank_step_probability = 0.5
-  , passive_aggressive_c = 10000000.0
-  , passive_aggressive_lambda = 0
-  , perceptron_margin_size = 1.0
-  , training_objective = FALSE
-  , hash_mask_bits = 0
-  , verbose = FALSE
-  , no_bias_term = FALSE
-  , ...
-) 
 
-{
-
-   ### check inputs
-
-  learner_type <- match.arg(learner_type)
-  loop_type    <- match.arg(loop_type)
-  eta_type     <- match.arg(eta_type)
-
-
-   ### still not sure how to treat the error term...
-
-   dimensionality <- (ncol(x$data) + 1) ##?
- 
-   return(
-      sofia.fit(x$labels, x$data, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability
-      , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
-      , no_bias_term, dimensionality, hash_mask_bits, verbose
-     ) 
-   )
-}
- 
-
-sofia.formula <- function(x, data
+sofia.formula <- function(formula, data
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
@@ -69,30 +26,25 @@ sofia.formula <- function(x, data
   learner_type <- match.arg(learner_type)
   loop_type <- match.arg(loop_type)
   eta_type <- match.arg(eta_type)
- 
-  mf <- model.frame(x, data)
-                  
-  y <- mf[,1]
-                          
-  no_bias_term <- ifelse(attr(terms(x, data = data), "intercept")==0, TRUE, FALSE)
-  mm <- model.matrix(x, mf) 
+  
+  parsed <- parse_formula(formula, data)
 
-  x <- mm[, ifelse(no_bias_term, 1, 2):ncol(mm)]
-  dimensionality <- ifelse(no_bias_term, ncol(x), ncol(x)+1)
-                  
-  return(
-    sofia.fit(y, x, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
+  dimensionality <- ifelse(parsed$no_bias_term, ncol(parsed$data), ncol(parsed$data)+1)
+  
+  sofia.model <-sofia.fit(parsed$data, parsed$labels, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
     , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
-    , no_bias_term, dimensionality, hash_mask_bits, verbose
-    )
+    , parsed$no_bias_term, dimensionality, hash_mask_bits, verbose
   )
+  
+  sofia.model$formula <- formula
+                  
+  return(sofia.model)
                   
 }
 
-### x -> labels
-### data -> matrix
 
-sofia.fit <- function(x, data
+
+sofia.fit <- function(x, y
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
@@ -110,9 +62,11 @@ sofia.fit <- function(x, data
   , verbose = FALSE
   , ...
 ) {
+  
+  if (any(y!=1 & y!=-1)) warning("Labels with values other than {-1, +1} found in dataset")
                   
   sofia_facade <- new(RSofiaFacade)
-  sofia_resultset <- sofia_facade$train(data, x
+  sofia_resultset <- sofia_facade$train(x, y
     , random_seed 
     , lambda 
     , iterations
@@ -147,10 +101,10 @@ sofia.fit <- function(x, data
                 , training_objective=training_objective
                 , dimensionality=dimensionality
               	, hash_mask_bits=hash_mask_bits
-              	, no_bias_term=no_bias_term),
+              	, no_bias_term=no_bias_term
+                ),
     weights = weights
     , training_time = training_time
-
   )
  
   class(obj) <- "sofia"
@@ -158,3 +112,6 @@ sofia.fit <- function(x, data
   return (obj)
 
 }
+
+
+
