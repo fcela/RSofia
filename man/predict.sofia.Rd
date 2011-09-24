@@ -11,20 +11,21 @@ Predicted values based on Sofia-ml model object.
 
 \usage{ 
 
-\method{predict}{sofia}(object, newdata, prediction_type, \dots ) 
-
+\method{predict}{sofia}(object, newdata, type = ifelse(object$par$learner_type \%in\% c("logreg-pegasos", "logreg"), "logistic", "linear"), \dots ) 
 } 
 
 \arguments{
 
 \item{object}{sofia-ml object}
-\item{newdata}{A data frame in which to look for variables with which to predict.}
-\item{prediction_type}{a character string. Options are \code{"linear"} for regression models and \code{"logistic"} for classification models.}
+\item{newdata}{If the model was fit with \code{sofia.formula}, a data frame; if it was fit with \code{sofia.fit}, a
+new set of X's}
+\item{type}{\code{linear}: use standard linear dot product <w,x> for predictions;
+\code{logistic}: use prediction function of exp(<w,x>) / (1 + exp(<w,x>)) for prediction, in the manner of logistic regression}
 \item{\dots}{unused}
 
 } 
 
-\value{\code{"predict.sofia"} produces a numeric vector of predictions }
+\value{\code{predict.sofia} produces a numeric vector of predictions }
 
 \seealso{
 
@@ -36,8 +37,13 @@ Predicted values based on Sofia-ml model object.
 
 \examples{
 
-data(irismod.svmlight)
-model <- sofia(irismod.svmlight)
-predict(model, irismod.svmlight, "logistic")
+i.TRAIN <- sample(1:nrow(iris), 100)
+model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg")
+p <- predict(model.logreg, newdata=iris[-1*i.TRAIN,])
+table(predicted=p>0.5, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
+
+model.pegasos <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="pegasos")
+d <- predict(model.pegasos, newdata=iris[-1*i.TRAIN,])
+table(predicted=d>0, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
 
 }
