@@ -62,9 +62,7 @@ sofia.fit <- function(x, y
   , verbose = FALSE
   , ...
 ) {
-  
-  if (any(y!=1 & y!=-1)) warning("Labels with values other than {-1, +1} found in dataset")
-                  
+               
   sofia_facade <- new(RSofiaFacade)
   sofia_resultset <- sofia_facade$train(x, y
     , random_seed 
