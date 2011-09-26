@@ -31,7 +31,7 @@ sofia.formula <- function(formula, data
 
   dimensionality <- ncol(parsed$data)+1
   
-  sofia.model <-sofia.fit(parsed$data, parsed$labels, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
+  sofia.model <- sofia.fit(parsed$data, parsed$labels, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
     , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
     , parsed$no_bias_term, dimensionality, hash_mask_bits, verbose
   )
@@ -42,7 +42,74 @@ sofia.formula <- function(formula, data
                   
 }
 
+sofia.character <- function(file
+  , random_seed = floor(runif(1, 1, 65535))
+  , lambda = 0.1 
+  , iterations = 100000
+  , learner_type = "pegasos"
+  , eta_type = "pegasos"
+	, loop_type = "stochastic"
+	, rank_step_probability = 0.5
+  , passive_aggressive_c = 10000000.0
+  , passive_aggressive_lambda = 0
+  , perceptron_margin_size = 1.0
+  , training_objective = FALSE
+  , no_bias_term = FALSE
+  , dimensionality = 150000 
+  , hash_mask_bits = 0
+  , verbose = FALSE
+  , buffer_mb = 40, ...) 
+{
+  sofia_facade <- new(RSofiaFacade)
+  sofia_resultset <- sofia_facade$train(file
+    , random_seed 
+    , lambda 
+    , iterations
+    , learner_type 
+    , eta_type
+    , loop_type
+  	, rank_step_probability
+    , passive_aggressive_c
+    , passive_aggressive_lambda
+    , perceptron_margin_size
+    , training_objective
+    , dimensionality
+  	, hash_mask_bits
+  	, no_bias_term
+    , verbose
+    , buffer_mb
+  )
 
+  weights        <- sofia_resultset$weights
+  names(weights) <- seq_along(weights)
+                                        
+  training_time <- sofia_resultset$training_time 
+ 
+  obj <- list(
+    par = list(random_seed=random_seed
+                , lambda=lambda
+                , iterations=iterations
+                , learner_type=learner_type
+                , eta_type=eta_type
+                , loop_type=loop_type
+                , rank_step_probability=rank_step_probability
+                , passive_aggressive_c=passive_aggressive_c
+                , passive_aggressive_lambda=passive_aggressive_lambda
+                , perceptron_margin_size=perceptron_margin_size
+                , training_objective=training_objective
+                , dimensionality=dimensionality
+              	, hash_mask_bits=hash_mask_bits
+              	, no_bias_term=no_bias_term
+                ),
+    weights = weights
+    , training_time = training_time
+  )
+ 
+  class(obj) <- "sofia"
+  
+  return (obj)
+
+}
 
 sofia.fit <- function(x, y
   , random_seed = floor(runif(1, 1, 65535))
