@@ -44,7 +44,7 @@ Read datasets in SVM-Light sparse data format:
 
 data(irismod)
 
-irismod.svmlight <- as.svmlight(Is.Virginica ~ ., irismod)
+irismod.svmlight <- parse_formula(Is.Virginica ~ ., irismod)
 
 tmp <- tempfile()
  
