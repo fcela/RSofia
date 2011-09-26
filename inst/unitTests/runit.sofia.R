@@ -36,6 +36,6 @@ test.sofia <- function() {
 
   weights.sofia_ml <- sofia_ml_test_results[[paste(LEARNER_TYPE, LOOP_TYPE, sep = "_")]]
  
-  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, tolerance = TOLERANCE)
+  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, msg = "Test Message", tolerance = TOLERANCE)
 
 }

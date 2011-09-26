@@ -30,10 +30,10 @@ returns numeric "0" on success or a character string on failure.
 \examples{
 
 data(irismod.svmlight)
-
+\dontrun{
 tmp <- tempfile()
 write.svmlight(irismod.svmlight, tmp)
 ### cleanup
 unlink(tmp)
-
+}
 }

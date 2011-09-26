@@ -2,7 +2,7 @@ sofia <- function(x, ...) {
   UseMethod("sofia")
 }
 
-sofia.formula <- function(formula, data
+sofia.formula <- function(x, data
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
@@ -22,6 +22,9 @@ sofia.formula <- function(formula, data
   ### need to replace with as.svmlight to eliminate duplicate code
   ### I think we should set no_bias_term permanately to FALSE and just have 
   ### the user provide the data with or without a column of ones
+
+  ### for consistency the first argument needs to be x...
+  formula <- x
   
   learner_type <- match.arg(learner_type)
   loop_type <- match.arg(loop_type)
@@ -42,13 +45,13 @@ sofia.formula <- function(formula, data
                   
 }
 
-sofia.character <- function(file
+sofia.character <- function(x
   , random_seed = floor(runif(1, 1, 65535))
   , lambda = 0.1 
   , iterations = 100000
-  , learner_type = "pegasos"
-  , eta_type = "pegasos"
-	, loop_type = "stochastic"
+  , learner_type = c("pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos") 
+  , eta_type = c("pegasos", "basic", "constant") 
+  , loop_type = c("stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc")
 	, rank_step_probability = 0.5
   , passive_aggressive_c = 10000000.0
   , passive_aggressive_lambda = 0
@@ -61,6 +64,11 @@ sofia.character <- function(file
   , buffer_mb = 40, ...) 
 {
   sofia_facade <- new(RSofiaFacade)
+  
+  learner_type <- match.arg(learner_type)
+  loop_type    <- match.arg(loop_type)
+  eta_type     <- match.arg(eta_type)
+  
   sofia_resultset <- sofia_facade$train_filename(file
     , random_seed 
     , lambda 

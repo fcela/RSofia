@@ -1,6 +1,7 @@
 \name{sofia} 
 
 \alias{sofia} 
+\alias{sofia.character}
 \alias{sofia.formula}
 \alias{sofia.fit}
 
@@ -12,7 +13,7 @@
 
 \usage{ sofia(x, \dots) 
 
-\method{sofia}{formula}(formula, data, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
+\method{sofia}{formula}(x, data, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
     iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
         "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos"), 
     eta_type = c("pegasos", "basic", "constant"), loop_type = c("stochastic", 
@@ -22,15 +23,15 @@
     perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
     verbose = FALSE, \dots)
 
-\method{sofia}{character}(filename, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
+\method{sofia}{character}(x, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
     iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
         "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos"), 
     eta_type = c("pegasos", "basic", "constant"), loop_type = c("stochastic", 
         "balanced-stochastic", "rank", "roc", "query-norm-rank", 
         "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
     passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
-    perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
-    verbose = FALSE, \dots)
+    perceptron_margin_size = 1, training_objective = FALSE,no_bias_term = FALSE, dimensionality=150000, hash_mask_bits = 0, 
+    verbose = FALSE, buffer_mb = 40, \dots)
 }
 
 \arguments{
@@ -63,9 +64,11 @@
 \item{passive_aggressive_lambda}{a numeric scalar. Lambda for pegasos-style projection for passive-aggressive update. When set to 0 (default) no projection is performed.}
 \item{perceptron_margin_size}{Width of margin for perceptron with margins. Default of 1 is equivalent to unregularized SVM-loss}
 \item{training_objective}{logical. When \code{TRUE}, computes the value of the standard SVM objective function on training data, after training.}
+\item{dimensionality}{integer. Index id of largest feature index in training data set, plus one.}
 \item{hash_mask_bits}{an integer. When set to a non-zero value, causes the use of a hased weight vector with hashed cross product features. This allows learning on conjunction of features, at some increase in computational cost. Note that this flag must be set both in training and testing to function properly. The size of the hash table is set to 2^\code{hash_mask_bits}. default value of 0 shows that hash cross products are not used.}
 \item{verbose}{logical.}
 \item{no_bias_term}{logical.}
+\item{buffer_mb}{integer.}
 \item{\dots}{items passed to methods.}
 } 
 
