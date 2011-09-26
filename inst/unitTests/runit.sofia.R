@@ -1,7 +1,6 @@
 ## ------------------------------------------------------------------------- ##
 ## Tests for setConfiguration                                                ##
 ##                                                                           ##
-## @author fernando.cela-diaz@bankofamerica.com                              ##
 ## ------------------------------------------------------------------------- ##
 
 cat("\n\nRUnit test cases for 'RSofia:::sofia' function\n\n")
@@ -15,8 +14,28 @@ cat("\n\nRUnit test cases for 'RSofia:::sofia' function\n\n")
 
 # Now the unit tests, following the naming convention test.XXX
 
-test.sofia_pegasos <- function(){
+# convention test.learner_type.loop_type
+
+### load result data
+data(sofia_ml_test_results)
+
+### load training data
+data(irismod)
+
+TOLERANCE <- .0001
+RANDOM_SEED <- 1L 
+
+### using stochastic loop
+test.sofia <- function() {
   
-  # Fit pegasos using sofia and known seed, compare output with that of a known out
+  LOOP_TYPE <- "stochastic"
+  LEARNER_TYPE <- "pegasos"
+
+  weights.RSofia <- sofia(Is.Virginica ~ ., irismod, random_seed = RANDOM_SEED
+                          , learner_type = LEARNER_TYPE, loop_type = LOOP_TYPE)$weights
+
+  weights.sofia_ml <- sofia_ml_test_results[[paste(LEARNER_TYPE, LOOP_TYPE, sep = "_")]]
+ 
+  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, tolerance = TOLERANCE)
 
 }
