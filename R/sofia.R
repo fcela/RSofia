@@ -61,7 +61,7 @@ sofia.character <- function(file
   , buffer_mb = 40, ...) 
 {
   sofia_facade <- new(RSofiaFacade)
-  sofia_resultset <- sofia_facade$train(file
+  sofia_resultset <- sofia_facade$train_filename(file
     , random_seed 
     , lambda 
     , iterations
@@ -131,7 +131,7 @@ sofia.fit <- function(x, y
 ) {
                
   sofia_facade <- new(RSofiaFacade)
-  sofia_resultset <- sofia_facade$train(x, y
+  sofia_resultset <- sofia_facade$train_fit(x, y
     , random_seed 
     , lambda 
     , iterations
@@ -179,6 +179,3 @@ sofia.fit <- function(x, y
   return (obj)
 
 }
-
-
-
