@@ -30,18 +30,18 @@ class RSofiaFacade {
 
   public:
     
-  std::map<std::string, SEXP> train(
-       const std::string & file_name
+  std::map<std::string, SEXP> train_filename(
+       const std::string & filename
       , const long int random_seed
       , const float lambda
       , const long int iterations
       , const string& learner
       , const string& eta
       , const string& loop
-      , const double rank_step_probability
-      , const double passive_aggressive_c
-      , const double passive_aggressive_lambda 
-      , const double perceptron_margin_size
+      , const float rank_step_probability
+      , const float passive_aggressive_c
+      , const float passive_aggressive_lambda 
+      , const float perceptron_margin_size
       , const bool training_objective 
       , const int dimensionality
       , const int hash_mask_bits
@@ -50,7 +50,7 @@ class RSofiaFacade {
       , const int buffer_mb 
     );
     
-    std::map<std::string, SEXP> train(
+    std::map<std::string, SEXP> train_fit(
         const Rcpp::NumericMatrix& x
       , const Rcpp::NumericVector& y
       , const long int random_seed
@@ -59,10 +59,10 @@ class RSofiaFacade {
       , const string& learner
       , const string& eta
       , const string& loop
-      , const double rank_step_probability
-      , const double passive_aggressive_c
-      , const double passive_aggressive_lambda 
-      , const double perceptron_margin_size
+      , const float rank_step_probability
+      , const float passive_aggressive_c
+      , const float passive_aggressive_lambda 
+      , const float perceptron_margin_size
       , const bool training_objective 
       , const int dimensionality
       , const int hash_mask_bits
@@ -102,7 +102,28 @@ class RSofiaFacade {
                                       , const int iterations
                                       , const double rank_step_probability); 
                    
+ 
   
+    std::map<std::string, SEXP> internal_train (
+       const SfDataSet & training_data
+       , long int random_seed
+       , float lambda
+       , long int iterations
+       , const std::string & learner
+       , const std::string & eta
+       , const std::string & loop
+       , float rank_step_probability
+       , float passive_aggressive_c
+       , float passive_aggressive_lambda
+       , float perceptron_margin_size
+       , bool training_objective
+       , int dimensionality
+       , int hash_mask_bits
+       , bool no_bias_term
+       , bool verbose //do we use this
+    );
+
+ 
 };
 
 #endif
