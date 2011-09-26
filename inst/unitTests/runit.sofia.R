@@ -14,7 +14,7 @@ cat("\n\nRUnit test cases for 'RSofia:::sofia' function\n\n")
 
 # Now the unit tests, following the naming convention test.XXX
 
-# convention test.learner_type.loop_type
+# convention test.sofia.learner_type.loop_type
 
 ### load result data
 data(sofia_ml_test_results)
@@ -25,10 +25,40 @@ data(irismod)
 TOLERANCE <- .0001
 RANDOM_SEED <- 1L 
 
-### using stochastic loop
-test.sofia <- function() {
+LEARNER_TYPE <- c( "pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos" )
+LOOP_TYPE <- c( "stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc" )
+
+test.sofia.pegasos.stochastic <- function() {
   
   LOOP_TYPE <- "stochastic"
+  LEARNER_TYPE <- "pegasos"
+
+  weights.RSofia <- sofia(Is.Virginica ~ ., irismod, random_seed = RANDOM_SEED
+                          , learner_type = LEARNER_TYPE, loop_type = LOOP_TYPE)$weights
+
+  weights.sofia_ml <- sofia_ml_test_results[[paste(LEARNER_TYPE, LOOP_TYPE, sep = "_")]]
+ 
+  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, msg = "Test Message", tolerance = TOLERANCE)
+
+}
+
+test.sofia.pegasos.balanced_stochastic <- function() {
+
+  LOOP_TYPE <- "balanced-stochastic"
+  LEARNER_TYPE <- "pegasos"
+
+  weights.RSofia <- sofia(Is.Virginica ~ ., irismod, random_seed = RANDOM_SEED
+                          , learner_type = LEARNER_TYPE, loop_type = LOOP_TYPE)$weights
+
+  weights.sofia_ml <- sofia_ml_test_results[[paste(LEARNER_TYPE, LOOP_TYPE, sep = "_")]]
+  
+  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, msg = "Test Message", tolerance = TOLERANCE)
+ 
+}
+
+test.sofia.pegasos.rank <- function() {
+  
+  LOOP_TYPE <- "rank"
   LEARNER_TYPE <- "pegasos"
 
   weights.RSofia <- sofia(Is.Virginica ~ ., irismod, random_seed = RANDOM_SEED

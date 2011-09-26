@@ -3,7 +3,7 @@
 \alias{irismod}
 \title{A Slight Modification to Edgar Anderson's Iris Data}
 \description{
-The famous iris data set, but with the species column altered from factor to binary and renamed \code{Is.Virginica}. 1's represent the Virginica Species whereas the 0's represent "veriscolor" or "virginica".
+The famous iris data set, but with the species column altered from factor to binary and renamed \code{Is.Virginica}. 1's represent the Virginica Species whereas the (-1)'s represent "veriscolor" or "virginica".
 }
 \usage{irismod}
 \format{A dataframe}

@@ -1,10 +1,5 @@
-write.svmlight <- function(x, file, ...) {
+write.svmlight <- function(labels, data, file, ...) {
 
-##  if(class(x) != "svmlight")
-##    stop("x must be of class svmlight")
-
-  val <- .Call("svmlight_writer", file, x$data, x$labels, PACKAGE = "RSofia")
-
-  return (val)
+  val <- .Call("svmlight_writer", file, data, labels, PACKAGE = "RSofia")
 
 }

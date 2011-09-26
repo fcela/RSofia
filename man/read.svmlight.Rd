@@ -31,7 +31,11 @@ Read datasets in SVM-Light sparse data format:
 } 
 
 \value{
-\code{read.svmlight} returns an \code{"svmlight"} object. 
+\code{read.svmlight} returns a list eturns a list containing the following components:
+  
+  \item{data}{a numeric matrix. The explanatory variables for the model}
+  \item{labels}{a numeric vector. The response variable}
+
 }
 
 \seealso{
@@ -44,11 +48,11 @@ Read datasets in SVM-Light sparse data format:
 
 data(irismod)
 
-irismod.svmlight <- parse_formula(Is.Virginica ~ ., irismod)
+x <- parse_formula(Is.Virginica ~ ., irismod)
 
 tmp <- tempfile()
  
-write.svmlight(irismod.svmlight, file = tmp)
+write.svmlight(x$labels, x$data, file = tmp)
 
 irismod.svmlight2 <- read.svmlight(tmp)
 

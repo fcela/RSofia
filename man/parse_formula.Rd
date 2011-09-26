@@ -1,9 +1,9 @@
 \name{parse_formula} 
 \alias{parse_formula} 
-\title{Cast Dataframe into Object of Class "svmlight"} 
+\title{parse a Dataframe for use with \code{"sofia.fit"}}
 
 \description{
-Function for casting a dataframe into an "svmlight" object.
+Function for parsing Dataframe for use with \code{"sofia.fit"}. 
 } 
 
 \usage{parse_formula(formula, data) } 
@@ -13,10 +13,10 @@ Function for casting a dataframe into an "svmlight" object.
 \item{data}{a data frame}
 } 
 
-\value{\code{"parse_formula"} returns an object of class \code{"svmlight"}. An object of class \code{"svmlight"} is a list containing the following components:
+\value{\code{"parse_formula"} returns a list containing the following components:
 
 \item{data}{a numeric matrix. The explanatory variables for the model}
-\item{labels}{a numeric vector. The response variable (binary for classification, continuous for regression)}
+\item{labels}{a numeric vector. The response variable}
 
 }
 

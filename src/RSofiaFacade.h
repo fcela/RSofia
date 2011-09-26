@@ -86,24 +86,23 @@ class RSofiaFacade {
                                        , const std::string & eta);
     //alters learner_type, c, lambda_val
     void define_LearnerType(sofia_ml::LearnerType * learner_type
-                                             , float * c 
-                                             , float * lambda_val
-                                             , const std::string & learner
-                                             , const double perceptron_margin_size
-                                             , const double passive_aggressive_c
-                                             , const double passive_aggressive_lambda);
+      , float * c 
+      , float * lambda_val
+      , const std::string & learner
+      , const double perceptron_margin_size
+      , const double passive_aggressive_c
+      , const double passive_aggressive_lambda);
      
-    void run_outer_loop(SfWeightVector * w, const std::string & loop
-                                      , const SfDataSet & training_data
-                                      , const sofia_ml::LearnerType & learner_type
-                                      , const sofia_ml::EtaType & eta_type
-                                      , const float lambda_val
-                                      , const float c
-                                      , const int iterations
-                                      , const double rank_step_probability); 
+    void run_outer_loop(SfWeightVector * w
+      , const std::string & loop
+      , const SfDataSet & training_data
+      , const sofia_ml::LearnerType & learner_type
+      , const sofia_ml::EtaType & eta_type
+      , const float lambda_val
+      , const float c
+      , const int iterations
+      , const double rank_step_probability); 
                    
- 
-  
     std::map<std::string, SEXP> internal_train (
        const SfDataSet & training_data
        , long int random_seed

@@ -7,11 +7,12 @@
 Write datasets in SVM-Light sparse data format
 } 
 
-\usage{write.svmlight(x, file, \dots)} 
+\usage{write.svmlight(labels, data, file, \dots)} 
 
 \arguments{
 
-\item{x}{an object of class "svmlight"}
+\item{labels}{numeric. labels for dataset}
+\item{data}{numeric matrix. explanatory variables}
 \item{file}{a character string giving the name of the file to be written to.}
 \item{\dots}{unused}
 
@@ -29,11 +30,12 @@ returns numeric "0" on success or a character string on failure.
 
 \examples{
 
-data(irismod.svmlight)
-\dontrun{
+data(irismod)
+
+x <- parse_formula(Is.Virginica ~ . , irismod)
+
 tmp <- tempfile()
-write.svmlight(irismod.svmlight, tmp)
+write.svmlight(x$labels, x$data, tmp)
 ### cleanup
 unlink(tmp)
-}
 }

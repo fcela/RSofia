@@ -37,14 +37,15 @@ new set of X's}
 
 \examples{
 
-\dontrun{
-i.TRAIN <- sample(1:nrow(iris), 100)
-model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg")
-p <- predict(model.logreg, newdata=iris[-1*i.TRAIN,])
-table(predicted=p>0.5, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
+data(irismod)
+i.TRAIN <- sample(1:nrow(irismod), 100)
 
-model.pegasos <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="pegasos")
-d <- predict(model.pegasos, newdata=iris[-1*i.TRAIN,])
-table(predicted=d>0, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
-}
+model.logreg <- sofia(Is.Virginica ~ ., data=irismod[i.TRAIN,], learner_type="logreg")
+p <- predict(model.logreg, newdata=irismod[-1*i.TRAIN,])
+table(predicted=p>0.5, actual=irismod[-1*i.TRAIN,]$Is.Virginica)
+
+model.pegasos <- sofia(Is.Virginica ~ ., data=irismod[i.TRAIN,], learner_type="pegasos")
+d <- predict(model.pegasos, newdata=irismod[-1*i.TRAIN,])
+table(predicted=d>0, actual=irismod[-1*i.TRAIN,]$Is.Virginica)
+
 }
