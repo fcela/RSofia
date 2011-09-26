@@ -30,9 +30,27 @@ class RSofiaFacade {
 
   public:
     
-//    RSofiaFacade(); 
+  std::map<std::string, SEXP> train(
+       const std::string & file_name
+      , const long int random_seed
+      , const float lambda
+      , const long int iterations
+      , const string& learner
+      , const string& eta
+      , const string& loop
+      , const double rank_step_probability
+      , const double passive_aggressive_c
+      , const double passive_aggressive_lambda 
+      , const double perceptron_margin_size
+      , const bool training_objective 
+      , const int dimensionality
+      , const int hash_mask_bits
+      , const bool no_bias_term
+      , const bool verbose
+      , const int buffer_mb 
+    );
+    
     std::map<std::string, SEXP> train(
-    //std::vector<float> train(
         const Rcpp::NumericMatrix& x
       , const Rcpp::NumericVector& y
       , const long int random_seed
@@ -59,6 +77,32 @@ class RSofiaFacade {
       , const std::string& prediction_type
     );
 
+  private:
+    //these are to eliminate duplicate code
+    SfWeightVector * alloc_SfWeightVector(int dimensionality, int hash_mask_bits);
+
+    //alters eta_type
+    void define_EtaType(sofia_ml::EtaType * eta_type
+                                       , const std::string & eta);
+    //alters learner_type, c, lambda_val
+    void define_LearnerType(sofia_ml::LearnerType * learner_type
+                                             , float * c 
+                                             , float * lambda_val
+                                             , const std::string & learner
+                                             , const double perceptron_margin_size
+                                             , const double passive_aggressive_c
+                                             , const double passive_aggressive_lambda);
+     
+    void run_outer_loop(SfWeightVector * w, const std::string & loop
+                                      , const SfDataSet & training_data
+                                      , const sofia_ml::LearnerType & learner_type
+                                      , const sofia_ml::EtaType & eta_type
+                                      , const float lambda_val
+                                      , const float c
+                                      , const int iterations
+                                      , const double rank_step_probability); 
+                   
+  
 };
 
 #endif

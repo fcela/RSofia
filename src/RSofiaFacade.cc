@@ -24,7 +24,75 @@
 #include "sf-sparse-vector.h"
 
 std::map<std::string, SEXP> RSofiaFacade::train (
-//std::vector<float> RSofiaFacade::train(
+      const std::string & file_name 
+    , const long int random_seed
+    , const float lambda
+    , const long int iterations
+    , const string& learner
+    , const string& eta
+    , const string& loop
+    , const double rank_step_probability
+    , const double passive_aggressive_c
+    , const double passive_aggressive_lambda 
+    , const double perceptron_margin_size
+    , const bool training_objective 
+    , const int dimensionality
+    , const int hash_mask_bits
+    , const bool no_bias_term
+    , const bool verbose
+    , const int buffer_mb
+) 
+
+{
+
+  //default buffer_mb?
+  SfDataSet training_data(file_name, buffer_mb, !no_bias_term);
+
+  SfWeightVector * w  = alloc_SfWeightVector(dimensionality, hash_mask_bits); 
+    
+  clock_t train_start = clock();
+
+  // Default values for c and lambda
+  
+  float c = 0.0;
+  float lambda_val = lambda;
+  
+  // Define eta
+  sofia_ml::EtaType eta_type;
+  define_EtaType(&eta_type, eta);
+
+  // Define learner type
+  sofia_ml::LearnerType learner_type;
+  define_LearnerType(&learner_type, &c, &lambda_val
+                       ,learner, perceptron_margin_size, passive_aggressive_c, passive_aggressive_lambda); 
+
+  // Run required outer loop
+  run_outer_loop(w, loop, training_data, learner_type, eta_type, lambda_val, c, iterations, rank_step_probability); 
+
+  clock_t train_end = clock();
+  float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
+
+  // copy results
+  size_t n = w->GetDimensions();
+    
+  std::vector<float> weights(n);
+
+  for(size_t i = 0; i < n; ++i)
+    weights[i] = w->ValueOf(i);
+  
+  delete w;
+
+  //result set
+  std::map<std::string, SEXP> rs;
+
+  rs["weights"]       = Rcpp::wrap(weights);
+  rs["training_time"] = Rcpp::wrap(time_elapsed); 
+
+  return(rs);
+
+}
+
+std::map<std::string, SEXP> RSofiaFacade::train (
       const Rcpp::NumericMatrix& x
     , const Rcpp::NumericVector& y
     , const long int random_seed
@@ -49,19 +117,16 @@ std::map<std::string, SEXP> RSofiaFacade::train (
     srand(random_seed);
   
     // Import data into a SfDataSet structure
-    SfDataSet training_data = SfDataSet(!no_bias_term);
+    SfDataSet training_data(!no_bias_term);
  
     std::stringstream out_stream;
     
-//   You cannot use multiple indices in a single [ ] expression. It is a C language restriction that no C++ matrix class system or library I know of overcomes. So use ( ) instead --dirk 
-
    for(int i = 0; i < x.nrow(); ++i) {
         // SfDataset::AddVector supports only data in string format
         out_stream << y[i];
         
         for(int j = 0; j < x.ncol(); ++j) { 
           if(x(i,j) != 0) {
-            //ooops need to increment j!
             out_stream << " " << (j + 1) << ":" << x(i,j);
           }
         }
@@ -71,16 +136,8 @@ std::map<std::string, SEXP> RSofiaFacade::train (
     }
     
     // Allocate vector of weights
-    SfWeightVector* w  = NULL;
+    SfWeightVector * w  = alloc_SfWeightVector(dimensionality, hash_mask_bits); 
     
-    if (hash_mask_bits == 0) {
-        w = new SfWeightVector(dimensionality);
-    } else {
-        w = new SfHashWeightVector(hash_mask_bits);
-    }
-    
-    assert(w != NULL);
-  
     clock_t train_start = clock();
 
   // Default values for c and lambda
@@ -88,97 +145,22 @@ std::map<std::string, SEXP> RSofiaFacade::train (
     float c = 0.0;
     float lambda_val = lambda;
   
-  // Define eta
+    // Define eta
     sofia_ml::EtaType eta_type;
-  
-    if (eta=="basic")
-      eta_type = sofia_ml::BASIC_ETA;
-    else if (eta=="pegasos")
-      eta_type = sofia_ml::PEGASOS_ETA;
-    else if (eta=="constant")
-      eta_type = sofia_ml::CONSTANT;
-    else {
-      std::cerr << "eta_type " << eta << " not supported.";
-      exit(0);
-    }
- 
-  // Define learner type
+    define_EtaType(&eta_type, eta);
+
+    // Define learner type
     sofia_ml::LearnerType learner_type;
-  
-    if (learner=="pegasos")
-      learner_type = sofia_ml::PEGASOS;
-    else if (learner=="margin-perceptron") {
-      learner_type = sofia_ml::MARGIN_PERCEPTRON;
-      c = perceptron_margin_size;
-    }
-    else if (learner=="passive-aggressive") {
-      learner_type = sofia_ml::PASSIVE_AGGRESSIVE;
-      c = passive_aggressive_c;
-      lambda_val = passive_aggressive_lambda;
-    }
-    else if (learner=="logreg-pegasos")
-      learner_type = sofia_ml::LOGREG_PEGASOS;
-    else if (learner=="logreg")
-      learner_type = sofia_ml::LOGREG;
-    else if (learner=="least-mean-squares")
-      learner_type = sofia_ml::LMS_REGRESSION;
-    else if (learner=="sgd-svm")
-      learner_type = sofia_ml::SGD_SVM;
-    else if (learner=="romma")
-      learner_type = sofia_ml::ROMMA;
-    else {
-      std::cerr << "learner_type " << learner << " not supported.";
-      exit(0);
-    }
-  
-  // Run required outer loop
-    if (loop=="stochastic")
-      sofia_ml::StochasticOuterLoop(
-          training_data, learner_type, eta_type, lambda_val, c, iterations, w
-      );
-    else if (loop=="balanced-stochastic")
-      sofia_ml::BalancedStochasticOuterLoop(
-          training_data, learner_type, eta_type, lambda_val, c, iterations, w
-      );
-    else if (loop=="roc")
-      sofia_ml::StochasticRocLoop(
-          training_data, learner_type, eta_type, lambda_val, c, iterations, w
-      );			     
-    else if (loop=="rank")
-      sofia_ml::StochasticRankLoop(
-          training_data, learner_type, eta_type, lambda_val, c, iterations, w
-      );
-    else if (loop=="combined-ranking")
-      sofia_ml::StochasticClassificationAndRankLoop(
-          training_data, learner_type, eta_type, lambda_val, c, rank_step_probability, iterations, w
-      );
-    else if (loop=="combined-roc")
-      sofia_ml::StochasticClassificationAndRocLoop(
-          training_data, learner_type, eta_type, lambda_val, c, rank_step_probability, iterations, w
-      );
-    else if (loop=="query-norm-rank")
-      sofia_ml::StochasticQueryNormRankLoop(
-          training_data, learner_type, eta_type, lambda_val, c, iterations, w
-      );
-    else {
-      std::cerr << "loop_type " << loop << " not supported.";
-      exit(0);
-    }
+    define_LearnerType(&learner_type, &c, &lambda_val
+                       ,learner, perceptron_margin_size, passive_aggressive_c, passive_aggressive_lambda); 
+
+    // Run required outer loop
+    run_outer_loop(w, loop, training_data, learner_type, eta_type, lambda_val, c, iterations, rank_step_probability); 
 
     clock_t train_end = clock();
-
     float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
 
-    // this might be a value we will want to return
-
- //   std::cout << time_elapsed << std::endl;
-  
-  // Clean up
-  //PrintElapsedTime(train_start, "Time to complete training: ");
-  // XXX: need to destroy training_data?
-  
-  // Return model fit
-  
+    //copy results
     size_t n = w->GetDimensions();
     
     std::vector<float> weights(n);
@@ -256,14 +238,170 @@ std::vector<float> RSofiaFacade::predict(
   return(predictions);
 }
 
+//private methods
+
+SfWeightVector * RSofiaFacade::alloc_SfWeightVector(int dimensionality, int hash_mask_bits) {
+
+  SfWeightVector* w  = NULL;
+    
+  if (hash_mask_bits == 0) {
+    w = new SfWeightVector(dimensionality);
+  } else {
+    w = new SfHashWeightVector(hash_mask_bits);
+  }
+  assert(w != NULL);
+
+  return w;
+
+}
+
+void RSofiaFacade::define_EtaType(sofia_ml::EtaType * eta_type, const std::string & eta) {
+
+  if (eta=="basic")
+    *eta_type = sofia_ml::BASIC_ETA;
+  else if (eta=="pegasos")
+    *eta_type = sofia_ml::PEGASOS_ETA;
+  else if (eta=="constant")
+    *eta_type = sofia_ml::CONSTANT;
+  else {
+    std::cerr << "eta_type " << eta << " not supported.";
+    exit(0);
+  }
+}
+
+void RSofiaFacade::define_LearnerType(sofia_ml::LearnerType * learner_type
+                                            , float * c
+                                            , float * lambda_val
+                                            , const std::string & learner
+                                            , const double perceptron_margin_size
+                                            , const double passive_aggressive_c
+                                            , const double passive_aggressive_lambda
+    ) {
+
+    if (learner=="pegasos")
+      *learner_type = sofia_ml::PEGASOS;
+    else if (learner=="margin-perceptron") {
+      *learner_type = sofia_ml::MARGIN_PERCEPTRON;
+      *c = perceptron_margin_size;
+    }
+    else if (learner=="passive-aggressive") {
+      *learner_type = sofia_ml::PASSIVE_AGGRESSIVE;
+      *c = passive_aggressive_c;
+      *lambda_val = passive_aggressive_lambda;
+    }
+    else if (learner=="logreg-pegasos")
+      *learner_type = sofia_ml::LOGREG_PEGASOS;
+    else if (learner=="logreg")
+      *learner_type = sofia_ml::LOGREG;
+    else if (learner=="least-mean-squares")
+      *learner_type = sofia_ml::LMS_REGRESSION;
+    else if (learner=="sgd-svm")
+      *learner_type = sofia_ml::SGD_SVM;
+    else if (learner=="romma")
+      *learner_type = sofia_ml::ROMMA;
+    else {
+      std::cerr << "learner_type " << learner << " not supported.";
+      exit(0);
+    }
+
+}
+
+void RSofiaFacade::run_outer_loop(SfWeightVector * w
+                                       , const std::string & loop
+                                       , const SfDataSet & training_data
+                                       , const sofia_ml::LearnerType & learner_type
+                                       , const sofia_ml::EtaType & eta_type
+                                       , const float lambda_val
+                                       , const float c
+                                       , const int iterations
+                                       , const double rank_step_probability)
+{
+
+    if (loop=="stochastic")
+      sofia_ml::StochasticOuterLoop(
+          training_data, learner_type, eta_type, lambda_val, c, iterations, w
+      );
+    else if (loop=="balanced-stochastic")
+      sofia_ml::BalancedStochasticOuterLoop(
+          training_data, learner_type, eta_type, lambda_val, c, iterations, w
+      );
+    else if (loop=="roc")
+      sofia_ml::StochasticRocLoop(
+          training_data, learner_type, eta_type, lambda_val, c, iterations, w
+      );			     
+    else if (loop=="rank")
+      sofia_ml::StochasticRankLoop(
+          training_data, learner_type, eta_type, lambda_val, c, iterations, w
+      );
+    else if (loop=="combined-ranking")
+      sofia_ml::StochasticClassificationAndRankLoop(
+          training_data, learner_type, eta_type, lambda_val, c, rank_step_probability, iterations, w
+      );
+    else if (loop=="combined-roc")
+      sofia_ml::StochasticClassificationAndRocLoop(
+          training_data, learner_type, eta_type, lambda_val, c, rank_step_probability, iterations, w
+      );
+    else if (loop=="query-norm-rank")
+      sofia_ml::StochasticQueryNormRankLoop(
+          training_data, learner_type, eta_type, lambda_val, c, iterations, w
+      );
+    else {
+      std::cerr << "loop_type " << loop << " not supported.";
+      exit(0);
+    }
+
+}
+
+
 RCPP_MODULE(sofia) {
    using namespace Rcpp ;
-	                  
+
+  //file interface
+  std::map<std::string, SEXP> (RSofiaFacade::*train_file)(
+    const std::string&
+    , const long int
+    , const float
+    , const long int
+    , const string&
+    , const string&
+    , const string&
+    , const double
+    , const double
+    , const double
+    , const double
+    , const bool
+    , const int
+    , const int
+    , const bool
+    , const bool
+    , const int
+  ) = &RSofiaFacade::train;
+  //fit interface
+  std::map<std::string, SEXP> (RSofiaFacade::*train_fit)(
+     const Rcpp::NumericMatrix&
+   , const Rcpp::NumericVector&
+   , const long int
+   , const float
+   , const long int
+   , const string&
+   , const string&
+   , const string&
+   , const double
+   , const double
+   , const double
+   , const double
+   , const bool
+   , const int
+   , const int
+   , const bool
+   , const bool
+  ) = &RSofiaFacade::train;
+	                 
    class_<RSofiaFacade>( "RSofiaFacade" )
-   // expose the default constructor
-   .constructor()    
-   .method("train", &RSofiaFacade::train)
-   .method("predict", &RSofiaFacade::predict)
+  .constructor()    
+  .method("train", train_file) 
+  .method("train", train_fit )
+  .method("predict", &RSofiaFacade::predict)
    ;
 
 }
