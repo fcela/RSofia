@@ -6,11 +6,11 @@
 cat("\n\nRUnit test cases for 'RSofia:::sofia' function\n\n")
 
 # This function is executed at the end of the unit test
-#.tearDown <- function() {
-#  if (exists("track", envir=.GlobalEnv)) {
-#    rm(track, envir=.GlobalEnv)
-#  }
-#}
+.tearDown <- function() {
+  if (exists("track", envir=.GlobalEnv)) {
+    rm(track, envir=.GlobalEnv)
+  }
+}
 
 # Now the unit tests, following the naming convention test.XXX
 
@@ -19,7 +19,7 @@ cat("\n\nRUnit test cases for 'RSofia:::sofia' function\n\n")
 ### load result data
 
 data(irismod)
-data(sofia_ml_test_results)
+data(sofia_ml_train)
 
 RANDOM_SEED <- 1L
 TOLERANCE <- .00001
@@ -35,7 +35,7 @@ create_function_text <- function(learner, loop, eta, no_bias_term) {
     , gsub("-","_",learner),"."
     , gsub("-","_",loop), "."
     , gsub("-","_",eta), "."
-    , paste("bias", as.integer(no_bias_term),sep=""), " <- function()"
+    , paste("nobias", as.integer(no_bias_term),sep=""), " <- function()"
     , " { \n", sep ="")
 
   function_txt.body <- paste(
@@ -47,8 +47,8 @@ create_function_text <- function(learner, loop, eta, no_bias_term) {
       "'  ,loop_type = '", loop,
       "'", 
       "  )$weights", "\n\n",
-      "  weights.sofia_ml <- sofia_ml_test_results[[\'",
-         paste(learner, loop, eta, paste("bias", as.integer(no_bias_term),sep=""), sep = '_'),
+      "  weights.sofia_ml <- sofia_ml_train[[\'",
+         paste(learner, loop, eta, paste("nobias", as.integer(no_bias_term),sep=""), sep = '_'),
          "\']]","\n\n",
       "  checkEqualsNumeric(weights.RSofia, weights.sofia_ml, tolerance = TOLERANCE)", sep = "")
                       
