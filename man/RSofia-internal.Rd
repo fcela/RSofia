@@ -1,6 +1,7 @@
 \name{RSofia-internal}
 \alias{RSofiaFacade}
-\alias{sofia_ml_test_results}
+\alias{sofia_ml_test}
+\alias{sofia_ml_train}
 
 \title{Internal RSofia Functions} 
 \description{

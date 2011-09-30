@@ -11,7 +11,7 @@ Predicted values based on Sofia-ml model object.
 
 \usage{ 
 
-\method{predict}{sofia}(object, newdata, type = ifelse(object$par$learner_type \%in\% c("logreg-pegasos", "logreg"), "logistic", "linear"), \dots ) 
+\method{predict}{sofia}(object, newdata, prediction_type, \dots ) 
 } 
 
 \arguments{
@@ -19,7 +19,7 @@ Predicted values based on Sofia-ml model object.
 \item{object}{sofia-ml object}
 \item{newdata}{If the model was fit with \code{sofia.formula}, a data frame; if it was fit with \code{sofia.fit}, a
 new set of X's}
-\item{type}{\code{linear}: use standard linear dot product <w,x> for predictions;
+\item{prediction_type}{\code{linear}: use standard linear dot product <w,x> for predictions;
 \code{logistic}: use prediction function of exp(<w,x>) / (1 + exp(<w,x>)) for prediction, in the manner of logistic regression}
 \item{\dots}{unused}
 
@@ -40,12 +40,12 @@ new set of X's}
 data(irismod)
 i.TRAIN <- sample(1:nrow(irismod), 100)
 
-model.logreg <- sofia(Is.Virginica ~ ., data=irismod[i.TRAIN,], learner_type="logreg")
-p <- predict(model.logreg, newdata=irismod[-1*i.TRAIN,])
+model.logreg <- sofia(Is.Virginica ~ ., data=irismod[i.TRAIN,], learner_type="logreg-pegasos")
+p <- predict(model.logreg, newdata=irismod[-1*i.TRAIN,], prediction_type = "logistic")
 table(predicted=p>0.5, actual=irismod[-1*i.TRAIN,]$Is.Virginica)
 
 model.pegasos <- sofia(Is.Virginica ~ ., data=irismod[i.TRAIN,], learner_type="pegasos")
-d <- predict(model.pegasos, newdata=irismod[-1*i.TRAIN,])
+d <- predict(model.pegasos, newdata=irismod[-1*i.TRAIN,], prediction_type = "linear")
 table(predicted=d>0, actual=irismod[-1*i.TRAIN,]$Is.Virginica)
 
 }
