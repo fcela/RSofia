@@ -48,7 +48,7 @@ test.predict.sofia <- function() {
     predict(
       sofia.pegasos.stochastic.pegasos.nobias1, irismod, prediction_type = "linear"
     ),
-    sofia_ml_test[["pegasos_stochastic_pegasos_nobias1"]],
+    sofia_ml_test[["pegasos_stochastic_pegasos_nobias1_linear"]],
     tolerance = TOLERANCE
   )
   
@@ -56,23 +56,23 @@ test.predict.sofia <- function() {
     predict(
       sofia.pegasos.stochastic.pegasos.nobias0, irismod, prediction_type = "linear"
     ),
-    sofia_ml_test[["pegasos_stochastic_pegasos_nobias0"]],
+    sofia_ml_test[["pegasos_stochastic_pegasos_nobias0_linear"]],
     tolerance = TOLERANCE
   )
   
   checkEqualsNumeric(
     predict(
-      sofia.logreg_pegasos.stochastic.pegasos.nobias1, irismod, prediction_type = "linear"
+      sofia.logreg_pegasos.stochastic.pegasos.nobias1, irismod, prediction_type = "logistic"
     ),
-    sofia_ml_test[["logreg-pegasos_stochastic_pegasos_nobias1"]],
+    sofia_ml_test[["logreg-pegasos_stochastic_pegasos_nobias1_logistic"]],
     tolerance = TOLERANCE
   )
   
   checkEqualsNumeric(
     predict(
-      sofia.logreg_pegasos.stochastic.pegasos.nobias0, irismod, prediction_type = "linear"
+      sofia.logreg_pegasos.stochastic.pegasos.nobias0, irismod, prediction_type = "logistic"
     ),
-    sofia_ml_test[["logreg-pegasos_stochastic_pegasos_nobias0"]],
+    sofia_ml_test[["logreg-pegasos_stochastic_pegasos_nobias0_logistic"]],
     tolerance = TOLERANCE
   )
     
