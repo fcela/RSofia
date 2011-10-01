@@ -60,8 +60,39 @@ create_function_text <- function(learner, loop, eta, no_bias_term) {
 
 }
 
+### this can be expanded into code obviously
+
 for(i in LEARNER_TYPE)
   for(j in LOOP_TYPE)
     for(k in ETA_TYPE)
-      for(l in NO_BIAS_TERM)
-        eval(parse(text = create_function_text(i,j,k,l)))()
+      for(l in NO_BIAS_TERM) 1L
+##        eval(parse(text = create_function_text(i,j,k,l)))()
+
+options(warn = 2)
+
+test.sofia.bad_parameters <- function() {
+
+  checkException(sofia("xxx",irismod))
+  checkException(sofia(Is.Virginica ~ ., "hello"))
+  checkException(sofia(Is.Virginica ~ ., irismod, random_seed = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, random_seed = c(1,2,3)))
+  checkException(sofia(Is.Virginica ~ ., irismod, lambda = "a")) 
+  checkException(sofia(Is.Virginica ~ ., irismod, lambda = c(1,2,3))) 
+  checkException(sofia(Is.Virginica ~ ., irismod, learner_type = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, eta_type = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, loop_type = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, rank_step_probability = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, rank_step_probability = c(1,2,3)))
+  checkException(sofia(Is.Virginica ~ ., irismod, rank_step_probability = -1))
+  checkException(sofia(Is.Virginica ~ ., irismod, passive_aggressive_lambda = "a")) 
+  checkException(sofia(Is.Virginica ~ ., irismod, passive_aggressive_lambda = c(1,2,3)))
+  checkException(sofia(Is.Virginica ~ ., irismod, passive_aggressive_c = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, passive_aggressive_c = c(1,2,3))) 
+  checkException(sofia(Is.Virginica ~ ., irismod, perceptron_margin_size = "a")) 
+  checkException(sofia(Is.Virginica ~ ., irismod, perceptron_margin_size = c(1,2,3))) 
+  checkException(sofia(Is.Virginica ~ ., irismod, training_objective = "a"))
+  checkException(sofia(Is.Virginica ~ ., irismod, training_objective = c(TRUE, FALSE))) 
+  checkException(sofia(Is.Virginica ~ ., irismod, hash_mask_bits = "a")) 
+  checkException(sofia(Is.Virginica ~ ., irismod, hash_mask_bits = c(1,2,3))) 
+
+}
