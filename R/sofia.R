@@ -19,18 +19,48 @@ sofia.formula <- function(x, data
   , ...
 ) {
 
+
+
   ### need to replace with as.svmlight to eliminate duplicate code
   ### I think we should set no_bias_term permanately to FALSE and just have 
   ### the user provide the data with or without a column of ones
 
   ### for consistency the first argument needs to be x...
-  formula <- x
-  
+
   learner_type <- match.arg(learner_type)
-  loop_type <- match.arg(loop_type)
-  eta_type <- match.arg(eta_type)
-  
-  parsed <- parse_formula(formula, data)
+  loop_type    <- match.arg(loop_type)
+  eta_type     <- match.arg(eta_type)
+
+  if(class(x) != "formula")
+    stop("x must be a formula")
+  if(!is.data.frame(data))
+    stop("data must be a dataframe")
+  if(!(is.numeric(random_seed) && length(random_seed) == 1))
+    stop("random_seed must be a numeric scalar")
+  if(!(is.numeric(lambda) && length(lambda) == 1))
+    stop("lambda must be a numeric scalar")
+  if(!(learner_type %in% c("pegasos", "sgd-svm", "passive-aggressive", "margin-perceptron", "romma", "logreg-pegasos")))
+    stop(sprintf("learner_type: %s not supported", learner_type))
+  if(!(eta_type %in% c("pegasos", "basic", "constant")))
+    stop(sprintf("eta_type: %s not supported", eta_type))
+  if(!(loop_type %in% c("stochastic", "balanced-stochastic", "rank", "roc", "query-norm-rank", "combined-ranking", "combined-roc")))
+    stop(sprintf("loop_type: %s not supported", loop_type))
+  if(!(rank_step_probability >= 0 && rank_step_probability <= 1))
+    stop("rank step probability must be between 0 and 1")
+  if(!(is.numeric(passive_aggressive_c) && length(passive_aggressive_c)==1))
+    stop("passive_aggressive_c must be a numeric scalar")
+  if(!(is.numeric(passive_aggressive_lambda) && length(passive_aggressive_lambda)==1))
+    stop("passive_aggressive_lambda must be a numeric scalar")
+  if(!(is.numeric(perceptron_margin_size) && length(perceptron_margin_size)==1))
+    stop("perceptron_margin_size must be a numeric scalar")
+  if(!(is.logical(training_objective)))
+    stop("training_objective must be 'TRUE' or 'FALSE'")
+  if(!(is.numeric(hash_mask_bits) && length(hash_mask_bits)==1))
+    stop("hash_mask_bits must be a numeric scalar")
+
+  ### does verbose do anything??
+
+  parsed <- parse_formula(x, data)
 
   dimensionality <- ncol(parsed$data)+1
   
@@ -39,7 +69,7 @@ sofia.formula <- function(x, data
     , parsed$no_bias_term, dimensionality, hash_mask_bits, verbose
   )
   
-  sofia.model$formula <- formula
+  sofia.model$formula <- x 
                   
   return(sofia.model)
                   
@@ -137,8 +167,13 @@ sofia.fit <- function(x, y
   , verbose = FALSE
   , ...
 ) {
-               
+  
+  ###
+  # break on bad parameter
+  ###
+
   sofia_facade <- new(RSofiaFacade)
+  
   sofia_resultset <- sofia_facade$train_fit(x, y
     , random_seed 
     , lambda 
