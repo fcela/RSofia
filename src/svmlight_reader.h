@@ -11,6 +11,6 @@
 
 #include<Rcpp.h>
  
-RcppExport SEXP svmlight_reader(SEXP rfile_name);
+RcppExport SEXP svmlight_reader(SEXP rfile_name, SEXP ruse_r_metadata);
 
 #endif
