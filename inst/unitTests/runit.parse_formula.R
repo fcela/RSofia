@@ -43,7 +43,8 @@ test.parse_formula.result_type <- function() {
   ### check individual types
 
   checkTrue(is.matrix(irismod.parsed$data) && is.numeric(irismod.parsed$data))
-  checkTrue(is.vector(irismod.parsed$labels, mode = "numeric" ))
+  checkTrue(is.numeric(irismod.parsed$labels))
+  checkTrue(!is.null(attr(irismod.parsed$labels, "name")))
   checkTrue(is.logical(irismod.parsed$no_bias_term))
 
 }
@@ -61,10 +62,10 @@ test.parse_formula.result_values <- function() {
 
   rm(training_data.parsed)
   
-  ### with Y ~ X1 + X2
+  ### with Y ~ X1 + X2a
 
   training_data.parsed <- parse_formula(Y ~ X1 + X2, training_data )
-
+  
   checkEqualsNumeric(training_data.parsed$labels, training_data$Y)
   checkEqualsNumeric(training_data.parsed$data  , as.matrix(training_data[,c("X1","X2")]))
   checkEquals(training_data.parsed$no_bias_term, FALSE)
