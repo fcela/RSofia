@@ -107,8 +107,9 @@ D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ra
 
 \dontrun{
 i.TRAIN <- sample(1:nrow(iris), 100)
-model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg")
+model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg-pegasos")
 p <- predict(model.logreg, newdata=iris[-1*i.TRAIN,])
+# NOTE: sofia-ml documentation appears to be outdated; output are probabilities rather than logodds
 table(predicted=p>0.5, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
 }
 
