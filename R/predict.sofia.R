@@ -16,10 +16,8 @@ predict.sofia <- function(object, newdata
     )
     warning(paste("logistic prediction type used with learner type:", object$par$learner_type))
 
-
-
-  
   # Check if data needs processing
+  # implies data was fit with sofia.fit (or sofia.character)
   if (is.null(object$formula)) {
     p <- sofia_facade$predict(object$weights, newdata, object$par$no_bias_term, prediction_type)  
   } else {
