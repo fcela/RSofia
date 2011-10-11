@@ -162,7 +162,7 @@ sofia.fit <- function(x, y
   , perceptron_margin_size = 1.0
   , training_objective = FALSE
   , no_bias_term = FALSE
-  , dimensionality = ncol(x)+ifelse(no_bias_term,0,1)
+  , dimensionality = ncol(x) + 1
 	, hash_mask_bits = 0
   , verbose = FALSE
   , ...
