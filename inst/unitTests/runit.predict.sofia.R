@@ -41,6 +41,13 @@ sofia.pegasos.stochastic.pegasos.nobias0 <- sofia(Is.Virginica ~ .
  , irismod, learner_type = "pegasos", loop_type = "stochastic"
  , eta_type = "pegasos", random_seed = RANDOM_SEED)
 
+### using sofia.fit 
+x <- parse_formula(Is.Virginica ~ -1 + ., irismod )
+
+sofia.pegasos.stochastic.pegasos.nobias1.fitmethod <- sofia.fit(x$data, x$labels
+  , no_bias_term = x$no_bias_term, random_seed = RANDOM_SEED
+  , eta_type = "pegasos", learner_type = "pegasos", loop_type = "stochastic")
+
 test.predict.sofia <- function() {
 
   #w bias
@@ -75,7 +82,12 @@ test.predict.sofia <- function() {
     sofia_ml_test[["logreg-pegasos_stochastic_pegasos_nobias0_logistic"]],
     tolerance = TOLERANCE
   )
-    
+  #using sofia.fit interface for model fitting requires diff. inputs for predict.sofia...
+  checkEqualsNumeric(
+    predict(
+      sofia.pegasos.stochastic.pegasos.nobias1.fitmethod, x$data, prediction_type = "linear"
+    ),
+    sofia_ml_test[["pegasos_stochastic_pegasos_nobias1_linear"]],
+    tolerance = TOLERANCE 
+  )
 }
-
-

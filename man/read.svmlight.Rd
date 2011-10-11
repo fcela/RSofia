@@ -36,7 +36,7 @@ Read datasets in SVM-Light sparse data format:
 } 
 
 \value{
-\code{read.svmlight} returns a list eturns a list containing the following components:
+\code{read.svmlight} returns a list containing the following components:
   
   \item{data}{a numeric matrix. The explanatory variables for the model}
   \item{labels}{a numeric vector. The response variable}

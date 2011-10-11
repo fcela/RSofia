@@ -68,7 +68,7 @@
 \item{hash_mask_bits}{an integer. When set to a non-zero value, causes the use of a hased weight vector with hashed cross product features. This allows learning on conjunction of features, at some increase in computational cost. Note that this flag must be set both in training and testing to function properly. The size of the hash table is set to 2^\code{hash_mask_bits}. default value of 0 shows that hash cross products are not used.}
 \item{verbose}{logical.}
 \item{no_bias_term}{logical.}
-\item{buffer_mb}{integer.}
+\item{buffer_mb}{integer. Size of buffer to use in reading/writing to files, in MB.}
 \item{\dots}{items passed to methods.}
 } 
 
@@ -105,11 +105,8 @@ D. Sculley. \emph{Large Scale Learning to Rank}. NIPS Workshop on Advances in Ra
 
 \examples{
 
-\dontrun{
-i.TRAIN <- sample(1:nrow(iris), 100)
-model.logreg <- sofia(ifelse(Species=="setosa", 1, -1)~ ., data=iris[i.TRAIN,], learner_type="logreg")
-p <- predict(model.logreg, newdata=iris[-1*i.TRAIN,])
-table(predicted=p>0.5, actual=iris[-1*i.TRAIN,"Species"]=="setosa")
-}
+data(irismod)
+
+model.logreg <- sofia(Is.Virginica ~ ., data=irismod, learner_type="logreg-pegasos")
 
 }

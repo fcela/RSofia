@@ -20,9 +20,6 @@ Write datasets in SVM-Light sparse data format
 
 } 
 
-\value{
-returns numeric "0" on success or a character string on failure.
-}
 
 \seealso{
 
@@ -37,7 +34,6 @@ data(irismod)
 x <- parse_formula(Is.Virginica ~ . , irismod)
 
 tmp <- tempfile()
-### a convenience wrapper could be helpful
 write.svmlight(x$labels, x$data, x$no_bias_term, tmp)
 readLines(tmp)
 unlink(tmp)
