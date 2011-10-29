@@ -66,7 +66,7 @@ for(i in LEARNER_TYPE)
   for(j in LOOP_TYPE)
     for(k in ETA_TYPE)
       for(l in NO_BIAS_TERM) 1L
-##        eval(parse(text = create_function_text(i,j,k,l)))()
+        eval(parse(text = create_function_text(i,j,k,l)))()
 
 options(warn = 2)
 

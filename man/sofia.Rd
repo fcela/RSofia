@@ -67,7 +67,12 @@
 \item{dimensionality}{integer. Index id of largest feature index in training data set, plus one.}
 \item{hash_mask_bits}{an integer. When set to a non-zero value, causes the use of a hased weight vector with hashed cross product features. This allows learning on conjunction of features, at some increase in computational cost. Note that this flag must be set both in training and testing to function properly. The size of the hash table is set to 2^\code{hash_mask_bits}. default value of 0 shows that hash cross products are not used.}
 \item{verbose}{logical.}
-\item{no_bias_term}{logical.}
+\item{no_bias_term}{logical. When set, causes a bias term x_0 to be set to 0 for every feature vector loaded from files, rather than the default of x_0 = 1.
+Setting this flag is equivalent to forcing a decision threshold of exactly 0 to be used.
+The same setting of this flag should be used for training and testing.
+Note that this flag as no effect for rank and roc optimzation.
+Default: not set. To set this flag using the formula interface use ( Y ~ -1 + . )}
+ 
 \item{buffer_mb}{integer. Size of buffer to use in reading/writing to files, in MB.}
 \item{\dots}{items passed to methods.}
 } 
