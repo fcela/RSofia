@@ -16,6 +16,7 @@ sofia.formula <- function(x, data
   , training_objective = FALSE
   , hash_mask_bits = 0
   , verbose = FALSE
+  , reserve = 10000 
   , ...
 ) {
 
@@ -66,7 +67,7 @@ sofia.formula <- function(x, data
   
   sofia.model <- sofia.fit(parsed$data, parsed$labels, random_seed, lambda, iterations, learner_type, eta_type, loop_type, rank_step_probability 
     , passive_aggressive_c, passive_aggressive_lambda, perceptron_margin_size, training_objective
-    , parsed$no_bias_term, dimensionality, hash_mask_bits, verbose
+    , parsed$no_bias_term, dimensionality, hash_mask_bits, verbose, reserve
   )
   
   sofia.model$formula <- x 
@@ -99,7 +100,7 @@ sofia.character <- function(x
   loop_type    <- match.arg(loop_type)
   eta_type     <- match.arg(eta_type)
   
-  sofia_resultset <- sofia_facade$train_filename(file
+  sofia_resultset <- sofia_facade$train_filename(x
     , random_seed 
     , lambda 
     , iterations
@@ -119,9 +120,10 @@ sofia.character <- function(x
   )
 
   weights        <- sofia_resultset$weights
-  names(weights) <- seq_along(weights)
+  names(weights) <- c("(Offset)", seq_len(length(weights))[-length(weights)])
                                         
   training_time <- sofia_resultset$training_time 
+  io_time       <- sofia_resultset$io_time
  
   obj <- list(
     par = list(random_seed=random_seed
@@ -141,6 +143,7 @@ sofia.character <- function(x
                 ),
     weights = weights
     , training_time = training_time
+    , io_time       = io_time
   )
  
   class(obj) <- "sofia"
@@ -163,8 +166,9 @@ sofia.fit <- function(x, y
   , training_objective = FALSE
   , no_bias_term = FALSE
   , dimensionality = ncol(x) + 1
-	, hash_mask_bits = 0
+  , hash_mask_bits = 0
   , verbose = FALSE
+  , reserve = 10000
   , ...
 ) {
   
@@ -190,12 +194,21 @@ sofia.fit <- function(x, y
   	, hash_mask_bits
   	, no_bias_term
     , verbose
+    , reserve
   )
 
   weights        <- sofia_resultset$weights
-  names(weights) <- c("(Offset)", colnames(x))
+
+  if(is.null(colnames(x))) {
+    colnames_ <- as.character(seq_len(ncol(x)))
+  } else {
+    colnames_ <- colnames(x)
+  }                 
+ 
+  names(weights) <- c("(Offset)", colnames_) 
                                         
   training_time <- sofia_resultset$training_time 
+  io_time       <- sofia_resultset$io_time
  
   obj <- list(
     par = list(random_seed=random_seed
@@ -215,6 +228,7 @@ sofia.fit <- function(x, y
                 ),
     weights = weights
     , training_time = training_time
+    , io_time = io_time
   )
  
   class(obj) <- "sofia"
