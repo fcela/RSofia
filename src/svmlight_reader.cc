@@ -1,10 +1,8 @@
 #include "svmlight_reader.h"
 
-SEXP svmlight_reader(SEXP rfile_name, SEXP ruse_r_metadata)
+SEXP svmlight_reader(SEXP rfile_name)
 
 {
-
-  bool use_r_metadata = Rcpp::as<bool>(ruse_r_metadata);
 
   //vector containing rows of svmlight txt file  
   std::list<std::string> svmdata;
@@ -27,45 +25,6 @@ SEXP svmlight_reader(SEXP rfile_name, SEXP ruse_r_metadata)
   SEXP no_bias_term;
 
 
-  //if metadata is being used, then first two lines of input file
-  //should match ###R_COLUMN_NAMES:... and ###R_NO_BIAS_TERM:...
-  //followed by data, and this information will be parsed
-
-  //read metadata strings
-  if ( use_r_metadata ) {
-
-    //identification patterns
-    std::string columns_pattern("###R_COLUMN_NAMES:");
-    std::string no_bias_pattern("###R_NO_BIAS_TERM:");
-
-    getline(in, tmp, '\n'); 
-    size_t last, first = tmp.find(columns_pattern);
-
-    if(first != std::string::npos) {
-
-      first += columns_pattern.size();
-      last = tmp.find(",", first);
-      responsename = tmp.substr(first, last - first);      
-    
-      while (last != std::string::npos) {
-        first = ++last;
-        last = tmp.find(",", last);
-        colnames.push_back(tmp.substr(first, last - first));
-      }
-
-    } else {
-      std::cout << "incorrect metadata format" << std::endl;
-    }
-    
-    getline(in, tmp, '\n');
-    size_t bias_term_start = tmp.find(no_bias_pattern);
-
-    if(bias_term_start != std::string::npos) {
-      bias_term_start += no_bias_pattern.size();
-      no_bias_term = Rcpp::wrap(strtol(tmp.substr(bias_term_start, 1).c_str(), NULL, 0) != 0);
-    }
- }
-  
   //we will want to remove whitespace
   std::string whitespaces(" \t\f\v\n\r");
   size_t found;
@@ -116,18 +75,8 @@ SEXP svmlight_reader(SEXP rfile_name, SEXP ruse_r_metadata)
 
   //if metadata is being used, assign necessary attribues
   //if it is not being assigned, reset no_bias_term to null, and user will need to specificy himself
-  if(use_r_metadata) {
- 
-    mat->attr("dimnames") = Rcpp::List::create( 
-      R_NilValue, 
-      Rcpp::wrap(colnames) 
-    );
-  
-    lab->attr("name") = Rcpp::wrap(responsename);
-  
-  } else {
-    no_bias_term = R_NilValue;   
-  } 
+
+  no_bias_term = R_NilValue;   
 
   //read data into matrix, and labels from list
 
