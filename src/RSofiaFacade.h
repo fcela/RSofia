@@ -68,6 +68,7 @@ class RSofiaFacade {
       , const int hash_mask_bits
       , const bool no_bias_term
       , const bool verbose
+      , const size_t reserve
     );
     
     std::vector<float> predict(
@@ -82,10 +83,10 @@ class RSofiaFacade {
     SfWeightVector * alloc_SfWeightVector(int dimensionality, int hash_mask_bits);
 
     //alters eta_type
-    void define_EtaType(sofia_ml::EtaType * eta_type
+    int define_EtaType(sofia_ml::EtaType * eta_type
                                        , const std::string & eta);
     //alters learner_type, c, lambda_val
-    void define_LearnerType(sofia_ml::LearnerType * learner_type
+    int define_LearnerType(sofia_ml::LearnerType * learner_type
       , float * c 
       , float * lambda_val
       , const std::string & learner
@@ -93,7 +94,7 @@ class RSofiaFacade {
       , const float passive_aggressive_c
       , const float passive_aggressive_lambda);
      
-    void run_outer_loop(SfWeightVector * w
+    int run_outer_loop(SfWeightVector * w
       , const std::string & loop
       , const SfDataSet & training_data
       , const sofia_ml::LearnerType & learner_type

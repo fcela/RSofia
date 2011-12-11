@@ -53,37 +53,59 @@ std::map<std::string, SEXP> RSofiaFacade::internal_train (
   
   float c = 0.0;
   float lambda_val = lambda;
-  
-  // Define eta
-  sofia_ml::EtaType eta_type;
-  define_EtaType(&eta_type, eta);
-
-  // Define learner type
-  sofia_ml::LearnerType learner_type;
-  define_LearnerType(&learner_type, &c, &lambda_val
-                       ,learner, perceptron_margin_size, passive_aggressive_c, passive_aggressive_lambda); 
-
-  // Run required outer loop
-  run_outer_loop(w, loop, training_data, learner_type, eta_type, lambda_val, c, iterations, rank_step_probability); 
-
-  clock_t train_end = clock();
-  float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
-
-
-  // copy data from sfweightvector to result
-  size_t n = w->GetDimensions();
-
-  std::vector<float> weights(n);
-
-  for(size_t i = 0; i < n; ++i)
-    weights[i] = w->ValueOf(i);
-  
-  delete w;
-
+ 
+  int bad = 0;
   std::map<std::string, SEXP> rs;
 
-  rs["weights"]       = Rcpp::wrap(weights);
-  rs["training_time"] = Rcpp::wrap(time_elapsed); 
+  sofia_ml::EtaType eta_type;
+
+  if(!bad) {
+ 
+    // Define eta
+    bad = define_EtaType(&eta_type, eta);
+    rs["error"] = Rcpp::wrap("bad eta type"); 
+
+  }
+    
+  sofia_ml::LearnerType learner_type;
+
+  if(!bad) {
+
+    // Define learner type
+    bad = define_LearnerType(&learner_type, &c, &lambda_val
+                       ,learner, perceptron_margin_size, passive_aggressive_c, passive_aggressive_lambda); 
+
+    rs["error"] = Rcpp::wrap("bad learner type");
+
+  }
+
+  if(!bad) {
+    // Run required outer loop
+    bad = run_outer_loop(w, loop, training_data, learner_type
+                        ,eta_type, lambda_val, c, iterations, rank_step_probability); 
+    rs["error"] = Rcpp::wrap("bad loop type");
+  }
+
+  if(!bad) {
+
+    clock_t train_end = clock();
+    float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
+
+    // copy data from sfweightvector to result
+    size_t n = w->GetDimensions();
+
+    std::vector<float> weights(n);
+
+    for(size_t i = 0; i < n; ++i)
+      weights[i] = w->ValueOf(i);
+  
+    delete w;
+
+
+    rs["weights"]       = Rcpp::wrap(weights);
+    rs["training_time"] = Rcpp::wrap(time_elapsed); 
+
+  }
 
   return(rs);
     
@@ -111,7 +133,11 @@ std::map<std::string, SEXP> RSofiaFacade::train_filename (
 
 {
 
+  clock_t t1 = clock();
+
   SfDataSet training_data(filename, buffer_mb, !no_bias_term);
+
+  clock_t t2 = clock();
 
   std::map<std::string, SEXP> rs = internal_train(
     training_data
@@ -131,6 +157,10 @@ std::map<std::string, SEXP> RSofiaFacade::train_filename (
     , no_bias_term
     , verbose //do we use this
   );
+
+  float io_time = (t2 - t1)/(float)CLOCKS_PER_SEC;
+
+  rs["io_time"] = Rcpp::wrap(io_time);
 
   return rs;
 
@@ -154,16 +184,25 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
     , const int hash_mask_bits
     , const bool no_bias_term
     , const bool verbose
+    , const size_t reserve
 ) 
 
 {
+  /***  
+  if(reserve == 0)  {
+    SfDataSet training_data(!no_bias_term);
+  } else {
+    SfDataSet training_data(!no_bias_term, reserve);
+  }***/
     
-  SfDataSet training_data(!no_bias_term);
- 
+  SfDataSet training_data(!no_bias_term, reserve);
+
   std::stringstream out_stream;
   
   //read data into training data
-  
+ 
+  clock_t t1 = clock();
+ 
   for(int i = 0; i < x.nrow(); ++i) {
     out_stream << y[i];
     for(int j = 0; j < x.ncol(); ++j) { 
@@ -171,9 +210,13 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
         out_stream << " " << (j + 1) << ":" << x(i,j);
       }
     }
-    training_data.AddVector(out_stream.str());
+    training_data.AddVector(out_stream.str().c_str());
     out_stream.str("");        
   }
+
+  clock_t t2 = clock();
+
+  float io_time = (t2 - t1)/(float)CLOCKS_PER_SEC;
 
   std::map<std::string, SEXP> rs = internal_train(
     training_data
@@ -194,6 +237,7 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
     , verbose
   );
 
+  rs["io_time"] = Rcpp::wrap(io_time);
   return rs;
 
 }
@@ -241,7 +285,8 @@ std::vector<float> RSofiaFacade::predict(
     sofia_ml::LogisticPredictionsOnTestSet(test_data, *w, &predictions);
   else {
     std::cerr << "prediction " << prediction_type << " not supported.";
-    exit(0);
+    //predictions will just return an empty vector in this case
+    //no exit called though
   }
    
   delete w;
@@ -261,13 +306,18 @@ SfWeightVector * RSofiaFacade::alloc_SfWeightVector(int dimensionality, int hash
   } else {
     w = new SfHashWeightVector(hash_mask_bits);
   }
-  assert(w != NULL);
+  //assert(w != NULL);
+  //assertions should never be called when interfacing with R.
+  //we will need a better way of addressing alloc success  
 
   return w;
 
 }
 
-void RSofiaFacade::define_EtaType(sofia_ml::EtaType * eta_type, const std::string & eta) {
+int RSofiaFacade::define_EtaType(sofia_ml::EtaType * eta_type, const std::string & eta) {
+
+  int retval = 0;
+
   if (eta=="basic")
     *eta_type = sofia_ml::BASIC_ETA;
   else if (eta=="pegasos")
@@ -275,12 +325,12 @@ void RSofiaFacade::define_EtaType(sofia_ml::EtaType * eta_type, const std::strin
   else if (eta=="constant")
     *eta_type = sofia_ml::CONSTANT;
   else {
-    std::cerr << "eta_type " << eta << " not supported.";
-    exit(0);
+    retval = 1;
   }
+  return retval;
 }
 
-void RSofiaFacade::define_LearnerType(sofia_ml::LearnerType * learner_type
+int RSofiaFacade::define_LearnerType(sofia_ml::LearnerType * learner_type
    , float * c
    , float * lambda_val
    , const std::string & learner
@@ -288,6 +338,8 @@ void RSofiaFacade::define_LearnerType(sofia_ml::LearnerType * learner_type
    , const float passive_aggressive_c
    , const float passive_aggressive_lambda
     ) {
+
+  int retval = 0;
 
   if (learner=="pegasos")
     *learner_type = sofia_ml::PEGASOS;
@@ -311,13 +363,16 @@ void RSofiaFacade::define_LearnerType(sofia_ml::LearnerType * learner_type
   else if (learner=="romma")
     *learner_type = sofia_ml::ROMMA;
   else {
-    std::cerr << "learner_type " << learner << " not supported.";
-    exit(0);
+    //std::cerr << "learner_type " << learner << " not supported.";
+    //exit(0);
+    retval = 1;
   }
+
+  return retval;
 
 }
 
-void RSofiaFacade::run_outer_loop(SfWeightVector * w
+int RSofiaFacade::run_outer_loop(SfWeightVector * w
    , const std::string & loop
    , const SfDataSet & training_data
    , const sofia_ml::LearnerType & learner_type
@@ -327,6 +382,8 @@ void RSofiaFacade::run_outer_loop(SfWeightVector * w
    , const int iterations
    , const float rank_step_probability)
 {
+
+  int retval = 0;
 
   if (loop=="stochastic")
     sofia_ml::StochasticOuterLoop(
@@ -357,9 +414,12 @@ void RSofiaFacade::run_outer_loop(SfWeightVector * w
         training_data, learner_type, eta_type, lambda_val, c, iterations, w
     );
   else {
-    std::cerr << "loop_type " << loop << " not supported.";
-    exit(0);
+    //std::cerr << "loop_type " << loop << " not supported.";
+    //exit(0);
+    retval = 1;
   }
+
+  return retval;
 
 }
 
