@@ -27,6 +27,8 @@
 #include <sstream>
 #include <string>
 
+#include <R.h>
+
 #include "sf-weight-vector.h"
 
 //----------------------------------------------------------------//
@@ -38,17 +40,19 @@ SfWeightVector::SfWeightVector(int dimensionality)
     squared_norm_(0.0),
     dimensions_(dimensionality) {
   if (dimensions_ <= 0) {
-    std::cerr << "Illegal dimensionality of weight vector less than 1."
-	      << std::endl
-	      << "dimensions_: " << dimensions_ << std::endl;
-    exit(1);
+    //std::cerr << "Illegal dimensionality of weight vector less than 1."
+	//      << std::endl
+	//      << "dimensions_: " << dimensions_ << std::endl;
+    //exit(1);
+    error("Illegal dimensionality of weight vector less than 1.");
   }
 
   weights_ = new float[dimensions_];
   if (weights_ == NULL) {
-    std::cerr << "Not enough memory for weight vector of dimension: " 
-	      <<  dimensions_ << std::endl;
-    exit(1);
+    //std::cerr << "Not enough memory for weight vector of dimension: " 
+	//      <<  dimensions_ << std::endl;
+    //exit(1);
+    error("Not enought memory for weight vector of dimension: %i ", dimensions_);
   }
   for (int i = 0; i < dimensions_; ++i) {
     weights_[i] = 0;
@@ -69,9 +73,10 @@ SfWeightVector::SfWeightVector(const string& weight_vector_string)
   // Allocate weights_.
   weights_ = new float[dimensions_];
   if (weights_ == NULL) {
-    std::cerr << "Not enough memory for weight vector of dimension: " 
-	      <<  dimensions_ << std::endl;
-    exit(1);
+    //std::cerr << "Not enough memory for weight vector of dimension: " 
+	//      <<  dimensions_ << std::endl;
+    //exit(1);
+    error("Not enought memory for weight vector of dimension: %i ", dimensions_);
   }
   
   // Fill weights_ from weights in string.
@@ -89,9 +94,10 @@ SfWeightVector::SfWeightVector(const SfWeightVector& weight_vector) {
 
   weights_ = new float[dimensions_];
   if (weights_ == NULL) {
-    std::cerr << "Not enough memory for weight vector of dimension: " 
-	      <<  dimensions_ << std::endl;
-    exit(1);
+    //std::cerr << "Not enough memory for weight vector of dimension: " 
+	//      <<  dimensions_ << std::endl;
+    //exit(1);
+    error("Not enought memory for weight vector of dimension: %i ", dimensions_);
   }
 
   for (int i = 0; i < dimensions_; ++i) {
@@ -145,7 +151,8 @@ void SfWeightVector::AddVector(const SfSparseVector& x, float x_scale) {
 	      << " exceeds dimensionality of weight vector: " 
 	      << dimensions_ << std::endl;
     std::cerr << x.AsString() << std::endl;
-    exit(1);
+    //exit(1);
+    error("hello");
   }
 
   float inner_product = 0.0;
@@ -168,18 +175,21 @@ void SfWeightVector::ScaleBy(double scaling_factor) {
   if (scaling_factor > 0.0) {
     scale_ *= scaling_factor;
   } else {
-    std::cerr << "Error: scaling weight vector by non-positive value!\n " 
-	      << "This can cause numerical errors in PEGASOS projection.\n "
-	      << "This is likely due to too large a value of eta * lambda.\n "
-	      << std::endl;
-    exit(1);
+    //std::cerr << "Error: scaling weight vector by non-positive value!\n " 
+	//      << "This can cause numerical errors in PEGASOS projection.\n "
+	//      << "This is likely due to too large a value of eta * lambda.\n "
+	//      << std::endl;
+    //exit(1);
+
+    error("Error: scaling weight vector by non-positive value!\n");
   }
 }
 
 float SfWeightVector::ValueOf(int index) const {
   if (index < 0) {
-    std::cerr << "Illegal index " << index << " in ValueOf. " << std::endl;
-    exit(1);
+    //std::cerr << "Illegal index " << index << " in ValueOf. " << std::endl;
+    //exit(1);
+    error("Illegal index %i in ValueOf.\n", index);
   }
   if (index >= dimensions_) {
     return 0;
