@@ -4,7 +4,8 @@ parse_formula <- function(formula, data) {
   y  <- model.response(mf, "numeric")                
   mm <- model.matrix(formula, data) 
   
-  attr(y, "name") <- names(mf)[1L]
+  ##this is screwing everything up
+  ##attr(y, "name") <- names(mf)[1L]
 
   rownames(mm) <- NULL
   names(y)     <- NULL
