@@ -65,8 +65,8 @@ create_function_text <- function(learner, loop, eta, no_bias_term) {
 for(i in LEARNER_TYPE)
   for(j in LOOP_TYPE)
     for(k in ETA_TYPE)
-      for(l in NO_BIAS_TERM) 1L
-        eval(parse(text = create_function_text(i,j,k,l)))()
+      for(l in NO_BIAS_TERM)
+        eval(parse(text = create_function_text(i,j,k,l)))() 
 
 options(warn = 2)
 
@@ -96,3 +96,18 @@ test.sofia.bad_parameters <- function() {
   checkException(sofia(Is.Virginica ~ ., irismod, hash_mask_bits = c(1,2,3))) 
 
 }
+
+### sofia.character
+
+
+test.sofia.character <- function() {
+
+  data(irismod)
+  x <- parse_formula(Is.Virginica ~ ., irismod)
+  tmp <- tempfile()
+  write.svmlight(x$labels, x$data, tmp)
+  checkException(sofia(tmp, dimensionality=1))
+  unlink(tmp)
+
+}
+
