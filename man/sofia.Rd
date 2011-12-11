@@ -21,7 +21,7 @@
         "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
     passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
     perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
-    verbose = FALSE, \dots)
+    verbose = FALSE, reserve = 10000, \dots)
 
 \method{sofia}{character}(x, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
     iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
@@ -72,7 +72,7 @@ Setting this flag is equivalent to forcing a decision threshold of exactly 0 to 
 The same setting of this flag should be used for training and testing.
 Note that this flag as no effect for rank and roc optimzation.
 Default: not set. To set this flag using the formula interface use ( Y ~ -1 + . )}
- 
+\item{reserve}{integer. experimental, should vector be explicity reserved for data?} 
 \item{buffer_mb}{integer. Size of buffer to use in reading/writing to files, in MB.}
 \item{\dots}{items passed to methods.}
 } 
