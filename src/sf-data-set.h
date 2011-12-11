@@ -34,6 +34,10 @@
 
 class SfDataSet {
  public:
+
+  // reserve space for the vector
+  SfDataSet(bool use_bias_term, size_t reserve);
+
   // Empty data set.
   SfDataSet(bool use_bias_term);
 
