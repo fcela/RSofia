@@ -1,5 +1,11 @@
-write.svmlight <- function(labels, data, no_bias_term, file, use_r_metadata = TRUE, ...) {
+write.svmlight <- function(labels, data, file, ...) {
 
-  val <- .Call("svmlight_writer", file, data, labels, no_bias_term, use_r_metadata, PACKAGE = "RSofia")
+  if(!is.vector(labels))
+    stop("labels must be a vector")
+
+  if(!is.matrix(data))
+    stop("data must be a matrix")
+
+  val <- .Call("svmlight_writer", file, data, labels, PACKAGE = "RSofia")
 
 }
