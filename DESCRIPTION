@@ -1,7 +1,7 @@
 Package: RSofia
 Type: Package
 Title: Port of sofia-ml (http://code.google.com/p/sofia-ml/) to R 
-Version: 1.0
+Version: 1.1
 Date: 2011-09-06
 Author: Michael King <wmichaelking1@gmail.com> and Fernando Cela Diaz <fcela@sloan.mit.edu>. Original sofia-ml code by D. Sculley <dsculley@google.com>.
 Maintainer: Michael King <wmichaelking1@gmail.com>

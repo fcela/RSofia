@@ -107,7 +107,7 @@ string SfSparseVector::AsString() const {
 
 void SfSparseVector::PushPair(int id, float value) {
   if (id > 0 && NumFeatures() > 0 && id <= FeatureAt(NumFeatures() - 1) ) {
-    std::cerr << id << " vs. " << FeatureAt(NumFeatures() - 1) << std::endl;
+    //std::cerr << id << " vs. " << FeatureAt(NumFeatures() - 1) << std::endl;
     DieFormat("Features not in ascending sorted order.");
   }
 

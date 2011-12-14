@@ -71,9 +71,14 @@ string SfDataSet::AsString() const {
   return out_string;
 }
 
+//mk edit, assertions should not be made in code called from R
 const SfSparseVector& SfDataSet::VectorAt(long int index) const {
-  assert (index >= 0 &&
+  bool good = (index >= 0 &&
 	  static_cast<unsigned long int>(index) < vectors_.size());
+
+  if(!good)
+    error("index out of range\n");
+
   return vectors_[index];
 }
 
