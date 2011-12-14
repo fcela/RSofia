@@ -22,6 +22,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+
+#include <R.h>
 #include "sf-sparse-vector.h"
 
 //----------------------------------------------------------------//
@@ -121,8 +123,9 @@ void SfSparseVector::PushPair(int id, float value) {
 //----------------------------------------------------------------//
 
 void SfSparseVector::DieFormat(const string& reason) {
-  std::cerr << "Wrong format for input data:\n  " << reason << std::endl;
-  exit(1);
+  //std::cerr << "Wrong format for input data:\n  " << reason << std::endl;
+  //exit(1);
+  error("Wrong format for input data:\n %s ", reason.c_str());
 }
 
 void SfSparseVector::Init(const char* in_string) {

@@ -227,7 +227,7 @@ void SfWeightVector::ProjectToL1Ball(float lambda, float epsilon) {
     theta = (max + min) / 2.0;
     current_l1 = 0.0;
     for (unsigned int i = 0; i < non_zeros.size(); ++i) {
-      current_l1 += fmax(0, non_zeros[i] - theta);
+      current_l1 += std::max<float>(0, non_zeros[i] - theta);
     }
     if (current_l1 <= lambda) {
       max = theta;
@@ -237,8 +237,8 @@ void SfWeightVector::ProjectToL1Ball(float lambda, float epsilon) {
   }
 
   for (int i = 0; i < dimensions_; ++i) {
-    if (weights_[i] > 0) weights_[i] = fmax(0, weights_[i] - theta);
-    if (weights_[i] < 0) weights_[i] = fmin(0, weights_[i] + theta);
+    if (weights_[i] > 0) weights_[i] = std::max<float>(0, weights_[i] - theta);
+    if (weights_[i] < 0) weights_[i] = std::min<float>(0, weights_[i] + theta);
   } 
 }
 
@@ -309,7 +309,7 @@ void SfWeightVector::ProjectToL1Ball(float lambda) {
   for (int i = 0; i < dimensions_; ++i) {
     if (ValueOf(i) == 0.0) continue;
     int sign = (ValueOf(i) > 0) ? 1 : -1;
-    weights_[i] = sign * fmax((sign * ValueOf(i) - theta), 0); 
+    weights_[i] = sign * std::max<float>((sign * ValueOf(i) - theta), 0); 
     squared_norm_ += weights_[i] * weights_[i];
   }
   scale_ = 1.0;

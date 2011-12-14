@@ -23,6 +23,7 @@
 
 #include "sofia-ml-methods.h"
 
+#include <R.h>
 #include <climits>
 #include <cmath>
 #include <cstdlib>
@@ -70,10 +71,11 @@ namespace sofia_ml {
       return 0.02;
       break;
     default:
-      std::cerr << "EtaType " << eta_type << " not supported." << std::endl;
-      exit(0);
+      //std::cerr << "EtaType " << eta_type << " not supported." << std::endl;
+      //exit(0);
+      error("EtaType %i not supported", eta_type);
     }
-    std::cerr << "Error in GetEta, we should never get here." << std::endl;
+    //std::cerr << "Error in GetEta, we should never get here." << std::endl;
     return 0;
   }
   
@@ -420,9 +422,10 @@ namespace sofia_ml {
     case ROMMA:
       return SingleRommaStep(x, w);
     default:
-      std::cerr << "Error: learner_type " << learner_type
-		<< " not supported." << std::endl;
-      exit(0);
+     // std::cerr << "Error: learner_type " << learner_type
+     //		<< " not supported." << std::endl;
+    //  exit(0);
+      error("Error: learner_type %i not supported.\n", learner_type);
     }
   }
 
@@ -451,9 +454,11 @@ namespace sofia_ml {
     case ROMMA:
       return SingleRommaRankStep(a, b, w);
     default:
-      std::cerr << "Error: learner_type " << learner_type
-		<< " not supported." << std::endl;
-      exit(0);
+      //std::cerr << "Error: learner_type " << learner_type
+	//	<< " not supported." << std::endl;
+      //exit(0);
+
+      error("Error: learner_type %i not supported.\n", learner_type);
     }
   }
 

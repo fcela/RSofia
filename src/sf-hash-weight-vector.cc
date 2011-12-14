@@ -53,9 +53,10 @@ SfHashWeightVector::SfHashWeightVector(int hash_mask_bits,
   : SfWeightVector(weight_vector_string),
     hash_mask_bits_(hash_mask_bits) {
   if (hash_mask_bits_ < 0) {
-    std::cerr << "Illegal number of hash_mask_bits for of weight vector less than 1." << std::endl
-	      << "hash_mask_bits__: " << dimensions_ << std::endl;
-    exit(1);
+    //std::cerr << "Illegal number of hash_mask_bits for of weight vector less than 1." << std::endl
+    //	      << "hash_mask_bits__: " << dimensions_ << std::endl;
+    //exit(1);
+    error("Illegal number of hash_mask_bits for of weight vector less than 1.\n hash_mask_bits__: %i\n", dimensions_);
   }
   hash_mask_ = SfHashMask(hash_mask_bits);
 }
@@ -94,10 +95,11 @@ void SfHashWeightVector::AddVector(const SfSparseVector& x,
     float this_x_value = x.ValueAt(i) * x_scale;
     int this_x_feature = SfHash(x.FeatureAt(i), hash_mask_);
     if (this_x_feature >= dimensions_) {
-      std::cerr << "Error: feature hash id " << this_x_feature
-		<< " exceeds weight vector dimension " << dimensions_
-		<< std::endl;
-      exit(1);
+      //std::cerr << "Error: feature hash id " << this_x_feature
+	//	<< " exceeds weight vector dimension " << dimensions_
+	//	<< std::endl;
+      //exit(1);
+      error("Error: feature hash id %i exceeds weight vector dimension %i.\n", this_x_feature, dimensions_);
     }
     norm_x += this_x_value * this_x_value;
     inner_product += weights_[this_x_feature] * this_x_value;
@@ -110,9 +112,10 @@ void SfHashWeightVector::AddVector(const SfSparseVector& x,
       float this_x_value = x_i_value * x.ValueAt(j) * x_scale;
       int this_x_feature = SfHash(x_i_feature, x.FeatureAt(j), hash_mask_);
       if (this_x_feature >= dimensions_) {
-	std::cerr << "Error: cross-product feature hash id " << this_x_feature
-		  << " exceeds weight vector dimension " << dimensions_;
-	exit(1);
+	//std::cerr << "Error: cross-product feature hash id " << this_x_feature
+	//	  << " exceeds weight vector dimension " << dimensions_;
+	//exit(1);
+        error("Error: cross-product feature hash id %i exceeds weight vector dimension %i", this_x_feature, dimensions_);
       }
       norm_x += this_x_value * this_x_value;
       inner_product += weights_[this_x_feature] * this_x_value;

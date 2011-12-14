@@ -24,7 +24,9 @@
 
 #include <Rcpp.h>
 #include "sf-data-set.h"
-#include "sofia_cmd.h"
+#include "sf-weight-vector.h"
+#include "sofia-ml-methods.h"
+#include "sf-hash-weight-vector.h"
 
 class RSofiaFacade {
 
@@ -83,10 +85,10 @@ class RSofiaFacade {
     SfWeightVector * alloc_SfWeightVector(int dimensionality, int hash_mask_bits);
 
     //alters eta_type
-    int define_EtaType(sofia_ml::EtaType * eta_type
+    void define_EtaType(sofia_ml::EtaType * eta_type
                                        , const std::string & eta);
     //alters learner_type, c, lambda_val
-    int define_LearnerType(sofia_ml::LearnerType * learner_type
+    void define_LearnerType(sofia_ml::LearnerType * learner_type
       , float * c 
       , float * lambda_val
       , const std::string & learner
@@ -94,7 +96,7 @@ class RSofiaFacade {
       , const float passive_aggressive_c
       , const float passive_aggressive_lambda);
      
-    int run_outer_loop(SfWeightVector * w
+    void run_outer_loop(SfWeightVector * w
       , const std::string & loop
       , const SfDataSet & training_data
       , const sofia_ml::LearnerType & learner_type

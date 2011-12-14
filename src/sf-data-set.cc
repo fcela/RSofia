@@ -26,6 +26,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "R.h"
 #include "sf-data-set.h"
 
 //----------------------------------------------------------------//
@@ -49,8 +50,9 @@ SfDataSet::SfDataSet(const string& file_name,
   std::ifstream file_stream(file_name.c_str(), std::ifstream::in);
   file_stream.rdbuf()->pubsetbuf(local_buffer, buffer_size); 
   if (!file_stream) {
-    std::cerr << "Error reading file " << file_name << std::endl;
-    exit(1);
+    //std::cerr << "Error reading file " << file_name << std::endl;
+    //exit(1);
+    error("Error reading file %s ", file_name.c_str());
   }
 
   string line_string;
