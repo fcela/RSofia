@@ -208,13 +208,13 @@ void SfWeightVector::ProjectToL1Ball(float lambda, float epsilon) {
   vector<float> non_zeros;
   for (int i = 0; i < dimensions_; ++i) {
     if (weights_[i] != 0.0) {
-      non_zeros.push_back(fabsf(weights_[i]));
+      non_zeros.push_back(std::fabs(weights_[i]));
     } else {
       continue;
     }
-    current_l1 += fabsf(weights_[i]);
-    if (fabs(weights_[i]) > max_value) {
-      max_value = fabs(weights_[i]);
+    current_l1 += std::fabs(weights_[i]);
+    if (std::fabs(weights_[i]) > max_value) {
+      max_value = std::fabs(weights_[i]);
     }
   }
   if (current_l1 <= (1.0 + epsilon) * lambda) return;
@@ -247,7 +247,7 @@ void SfWeightVector::ProjectToL1Ball(float lambda) {
   // Bail out early if possible.
   float current_l1 = 0.0;
   for (int i = 0; i < dimensions_; ++i) {
-    if (fabsf(ValueOf(i)) > 0) current_l1 += fabsf(ValueOf(i));
+    if (std::fabs(ValueOf(i)) > 0) current_l1 += std::fabs(ValueOf(i));
   }
   if (current_l1 < lambda) return;
 
@@ -260,9 +260,9 @@ void SfWeightVector::ProjectToL1Ball(float lambda) {
   vector<int>* temp;
   // Populate U with all non-zero elements in weight vector.
   for (int i = 0; i < dimensions_; ++i) {
-    if (fabsf(ValueOf(i)) > 0) {
+    if (std::fabs(ValueOf(i)) > 0) {
       U->push_back(i);
-      current_l1 += fabsf(ValueOf(i));
+      current_l1 += std::fabs(ValueOf(i));
     }
   }
 
@@ -273,12 +273,12 @@ void SfWeightVector::ProjectToL1Ball(float lambda) {
     G->clear();
     L->clear();
     int k = (*U)[static_cast<int>(rand() % U->size())];
-    float pivot_k = fabsf(ValueOf(k));
-    float partial_sum_delta = fabsf(ValueOf(k));
+    float pivot_k = std::fabs(ValueOf(k));
+    float partial_sum_delta = std::fabs(ValueOf(k));
     float partial_pivot_delta = 1.0;
     // Partition U using pivot_k.
     for (unsigned int i = 0; i < U->size(); ++i) {
-      float w_i = fabsf(ValueOf((*U)[i]));
+      float w_i = std::fabs(ValueOf((*U)[i]));
       if (w_i >= pivot_k) {
 	if ((*U)[i] != k) {
 	  partial_sum_delta += w_i;
