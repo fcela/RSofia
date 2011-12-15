@@ -34,7 +34,8 @@
 //----------------------------------------------------------------//
 
 SfDataSet::SfDataSet(bool use_bias_term, size_t reserve) : use_bias_term_(use_bias_term) {
-  vectors_.reserve(reserve);
+  if(reserve > 0)
+    vectors_.reserve(reserve);
 }
 
 SfDataSet::SfDataSet(bool use_bias_term)

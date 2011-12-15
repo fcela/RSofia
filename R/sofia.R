@@ -16,7 +16,7 @@ sofia.formula <- function(x, data
   , training_objective = FALSE
   , hash_mask_bits = 0
   , verbose = FALSE
-  , reserve = 10000 
+  , reserve = 0 
   , ...
 ) {
 
@@ -168,7 +168,7 @@ sofia.fit <- function(x, y
   , dimensionality = ncol(x) + 1
   , hash_mask_bits = 0
   , verbose = FALSE
-  , reserve = 10000
+  , reserve = 0 
   , ...
 ) {
   

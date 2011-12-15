@@ -21,7 +21,7 @@
         "combined-ranking", "combined-roc"), rank_step_probability = 0.5, 
     passive_aggressive_c = 1e+07, passive_aggressive_lambda = 0, 
     perceptron_margin_size = 1, training_objective = FALSE, hash_mask_bits = 0, 
-    verbose = FALSE, reserve = 10000, \dots)
+    verbose = FALSE, reserve = 0, \dots)
 
 \method{sofia}{character}(x, random_seed = floor(runif(1, 1, 65535)), lambda = 0.1, 
     iterations = 1e+05, learner_type = c("pegasos", "sgd-svm", 
