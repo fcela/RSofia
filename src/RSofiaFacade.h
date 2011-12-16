@@ -27,6 +27,7 @@
 #include "sf-weight-vector.h"
 #include "sofia-ml-methods.h"
 #include "sf-hash-weight-vector.h"
+#include<ctime>
 
 class RSofiaFacade {
 

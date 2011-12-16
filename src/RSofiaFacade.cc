@@ -46,7 +46,7 @@ std::map<std::string, SEXP> RSofiaFacade::internal_train (
   srand(random_seed);
   SfWeightVector * w  = alloc_SfWeightVector(dimensionality, hash_mask_bits); 
     
-  clock_t train_start = clock();
+  clock_t train_start = std::clock();
 
   // Default values for c and lambda
   
@@ -70,7 +70,7 @@ std::map<std::string, SEXP> RSofiaFacade::internal_train (
   run_outer_loop(w, loop, training_data, learner_type
                         ,eta_type, lambda_val, c, iterations, rank_step_probability); 
 
-  clock_t train_end = clock();
+  clock_t train_end = std::clock();
   float time_elapsed = (train_end - train_start) / (float)CLOCKS_PER_SEC;
 
     // copy data from sfweightvector to result
@@ -113,11 +113,11 @@ std::map<std::string, SEXP> RSofiaFacade::train_filename (
 
 {
 
-  clock_t t1 = clock();
+  clock_t t1 = std::clock();
 
   SfDataSet training_data(filename, buffer_mb, !no_bias_term);
 
-  clock_t t2 = clock();
+  clock_t t2 = std::clock();
 
   std::map<std::string, SEXP> rs = internal_train(
     training_data
@@ -181,7 +181,7 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
   
   //read data into training data
  
-  clock_t t1 = clock();
+  clock_t t1 = std::clock();
  
   for(int i = 0; i < x.nrow(); ++i) {
     out_stream << y[i];
@@ -194,7 +194,7 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
     out_stream.str("");        
   }
 
-  clock_t t2 = clock();
+  clock_t t2 = std::clock();
 
   float io_time = (t2 - t1)/(float)CLOCKS_PER_SEC;
 
