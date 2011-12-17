@@ -164,7 +164,7 @@ std::map<std::string, SEXP> RSofiaFacade::train_fit (
     , const int hash_mask_bits
     , const bool no_bias_term
     , const bool verbose
-    , const size_t reserve
+    , const int reserve
 ) 
 
 {

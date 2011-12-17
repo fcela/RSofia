@@ -71,7 +71,7 @@ class RSofiaFacade {
       , const int hash_mask_bits
       , const bool no_bias_term
       , const bool verbose
-      , const size_t reserve
+      , const int reserve
     );
     
     std::vector<float> predict(
